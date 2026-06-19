@@ -1,4 +1,4 @@
-const CACHE='cashflow-v3';
+const CACHE='cashflow-v4';
 self.addEventListener('install',e=>{
   e.waitUntil(
     caches.open(CACHE).then(c=>c.addAll([
@@ -18,7 +18,7 @@ self.addEventListener('activate',e=>{
 });
 self.addEventListener('fetch',e=>{
   const url=new URL(e.request.url);
-  if(url.pathname.endsWith('index.html')||url.pathname==='/Cashflow/'){
+  if(url.pathname==='/Cashflow/'||url.pathname==='/Cashflow/index.html'){
     e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
     return;
   }
