@@ -126,7 +126,7 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
   <span class="brand">CASHFLOW</span>
   <div style="display:flex;align-items:center;gap:8px">
     <button id="install-btn" onclick="triggerInstall()" style="border:2px solid #111;background:#111;color:#FFD600;font-family:Space Mono,monospace;font-size:10px;font-weight:700;padding:4px 10px;cursor:pointer">+ INSTALL</button>
-    <span class="date-lbl">FRI, JUN 19</span>
+    <span class="date-lbl" id="date-lbl"></span>
   </div>
 </div>
 
@@ -430,13 +430,16 @@ function safePerDay(){
 }
 
 function calcProjectionNets(){
-  /* Period 0 = bank (which already includes today's pay) minus bills.
-     All future periods = PAY minus bills for that cycle. */
-  return periods.map((p,i)=>{
-    const exp = totalBills(i);
-    const base = i === 0 ? S.bank : PAY;
-    return Math.round(base - exp);
+  /* Period 0: closing = bank - bills
+     Period N: closing = prev_closing + PAY - bills (negative carries forward) */
+  const nets = [];
+  let running = S.bank;
+  periods.forEach((p,i) => {
+    if(i > 0) running += PAY;
+    running -= totalBills(i);
+    nets.push(Math.round(running));
   });
+  return nets;
 }
 
 function $n(n){ return (n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString(); }
@@ -932,6 +935,15 @@ function refresh(){
   buildHero();
   buildBillsToday();
 }
+
+// Dynamic date label
+(function(){
+  const now = new Date();
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('date-lbl').textContent =
+    days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+})();
 
 buildChart();
 refresh();
