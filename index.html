@@ -414,17 +414,32 @@ function unpaidBills(i){
   return periods[i].bills.reduce((s,b,j)=> S.paidMap[i][j] ? s : s+b.amt, 0);
 }
 function totalBills(i){ return periods[i].bills.reduce((s,b)=>s+b.amt,0); }
-function real(){ return S.bank - unpaidBills(S.selected); }
+
+/* Projected starting bank for any cycle:
+   cycle 0 = real S.bank (pay already in account)
+   cycle N = closing balance of cycle N-1 + PAY */
+function projectedBank(i){
+  if(i === 0) return S.bank;
+  let running = S.bank;
+  for(let j = 0; j < i; j++){
+    running -= totalBills(j);
+    running += PAY;
+  }
+  return running;
+}
+
+function real(){ return projectedBank(S.selected) - unpaidBills(S.selected); }
 function daysUntilPay(){
   const now = new Date(); now.setHours(0,0,0,0);
   const np = new Date(periods[S.selected].nextPayDate); np.setHours(0,0,0,0);
   return Math.max(Math.round((np-now)/86400000), 1);
 }
 function safePerDay(){
+  const bank = projectedBank(S.selected);
   const fixedThisCycle = periods[S.selected].bills
     .filter(b => b.type === 'fixed')
     .reduce((s,b) => s + b.amt, 0);
-  const afterFixed = S.bank - fixedThisCycle;
+  const afterFixed = bank - fixedThisCycle;
   if(afterFixed <= 0) return 0;
   return afterFixed / daysUntilPay();
 }
@@ -462,9 +477,10 @@ function buildStrip(){
 function buildHero(){
   const r=real(), sf=safePerDay(), d=daysUntilPay();
   const ub=unpaidBills(S.selected);
+  const pb=projectedBank(S.selected);
   document.getElementById('real-num').textContent=$n(r);
   document.getElementById('real-num').className='real-num '+amtCls(r);
-  document.getElementById('display-bank').textContent=$n(S.bank);
+  document.getElementById('display-bank').textContent=S.selected===0?$n(S.bank):$n(pb)+' proj.';
   document.getElementById('display-bills').textContent=$n(ub);
   document.getElementById('bank-input').value=S.bank;
 
