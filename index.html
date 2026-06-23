@@ -416,16 +416,11 @@ function unpaidBills(i){
 function totalBills(i){ return periods[i].bills.reduce((s,b)=>s+b.amt,0); }
 
 /* Projected starting bank for any cycle:
-   cycle 0 = real S.bank (pay already in account)
-   cycle N = closing balance of cycle N-1 + PAY */
+   cycle 0 = real S.bank (current actual balance)
+   cycle N = PAY only (fresh start, assume previous cycle spent down to zero) */
 function projectedBank(i){
   if(i === 0) return S.bank;
-  let running = S.bank;
-  for(let j = 0; j < i; j++){
-    running -= totalBills(j);
-    running += PAY;
-  }
-  return running;
+  return PAY;
 }
 
 function real(){ return projectedBank(S.selected) - unpaidBills(S.selected); }
@@ -445,16 +440,12 @@ function safePerDay(){
 }
 
 function calcProjectionNets(){
-  /* Period 0: closing = bank - bills
-     Period N: closing = prev_closing + PAY - bills (negative carries forward) */
-  const nets = [];
-  let running = S.bank;
-  periods.forEach((p,i) => {
-    if(i > 0) running += PAY;
-    running -= totalBills(i);
-    nets.push(Math.round(running));
+  /* Period 0: closing = bank - unpaidBills (current cycle, actual balance)
+     Period N: closing = PAY - totalBills (fresh start, no carryover) */
+  return periods.map((p,i) => {
+    if(i === 0) return Math.round(S.bank - unpaidBills(0));
+    return Math.round(PAY - totalBills(i));
   });
-  return nets;
 }
 
 function $n(n){ return (n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString(); }
