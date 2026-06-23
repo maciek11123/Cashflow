@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CASHFLOW</title>
+<meta name="theme-color" content="#FFD600"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="CASHFLOW"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="cashflow-icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-height:100vh}
+.app{max-width:420px;margin:0 auto;padding:14px 12px 90px}
+
+/* top bar */
+.top-bar{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.brand{font-size:11px;letter-spacing:.14em;font-weight:700}
+.date-lbl{font-size:11px;letter-spacing:.06em}
+
+/* cycle strip */
+.cycle-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:10px;scrollbar-width:none}
+.cycle-strip::-webkit-scrollbar{display:none}
+.cpill{flex-shrink:0;border:2.5px solid #111;border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer;background:#fff;font-family:'Space Mono',monospace}
+.cpill.active{background:#111;color:#FFD600}
+.cpill.rent{border-color:#E24B4A}
+.cpill.vac{border-color:#1D9E75}
+
+/* real balance hero */
+.hero-card{background:#fff;border:3px solid #111;padding:14px;margin-bottom:8px}
+.hero-label{font-size:10px;letter-spacing:.14em;font-weight:700;color:#888;margin-bottom:4px}
+.real-num{font-size:40px;font-weight:700;line-height:1;margin-bottom:3px}
+.real-num.pos{color:#111}
+.real-num.warn{color:#BA7517}
+.real-num.neg{color:#E8157A}
+.hero-sub{font-size:11px;color:#888;margin-bottom:10px;display:flex;gap:12px}
+.hero-sub b{color:#111}
+.alert-bar{border:2px solid #E8157A;padding:7px 10px;font-size:11px;font-weight:700;color:#E8157A;margin-bottom:10px;display:none}
+.alert-bar.show{display:block}
+.two-chips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.chip{border:2.5px solid #111;padding:10px 12px}
+.chip.cyan{background:#00E5FF}
+.chip.pink{background:#E8157A;color:#fff}
+.chip .cl{font-size:9px;letter-spacing:.1em;font-weight:700;margin-bottom:3px}
+.chip .cv{font-size:17px;font-weight:700;line-height:1}
+.chip .cs{font-size:10px;opacity:.75;margin-top:2px}
+.bank-row{display:flex;align-items:center;gap:8px;border-top:2px solid #111;padding-top:10px}
+.bank-label{font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;flex:1}
+.bank-input{border:2px solid #111;padding:6px 10px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;width:110px;text-align:right;background:#fff;outline:none}
+.bank-input:focus{background:#FFD600}
+
+/* graph */
+.graph-card{background:#fff;border:3px solid #111;padding:14px;margin-bottom:8px}
+.graph-label{font-size:10px;letter-spacing:.14em;font-weight:700;margin-bottom:8px}
+.graph-wrap{position:relative;height:100px}
+
+/* nav tabs */
+.nav-tabs{display:flex;position:fixed;bottom:0;left:0;right:0;max-width:420px;margin:0 auto;border-top:3px solid #111;border-bottom:none;background:#FFD600;z-index:100}
+.ntab{flex:1;padding:12px 4px 16px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer;text-align:center;border:none;background:transparent;border-right:2px solid #111;color:#111}
+.ntab:last-child{border-right:none}
+.ntab.active{background:#111;color:#FFD600}
+
+/* tab panes */
+.pane{display:none}
+.pane.active{display:block}
+
+/* bills */
+.section-hdr{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.12em;font-weight:700;color:#444;margin:0 0 6px}
+.bill-item{background:#ffffff !important;border:2.5px solid #111;padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px}
+.bill-item.is-paid{background:#f0f0f0 !important;border-style:dashed;border-color:#aaa}
+.bcheck{width:18px;height:18px;border:2.5px solid #111;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;font-weight:700}
+.bcheck.on{background:#111;color:#FFD600;border-color:#111}
+.binfo{flex:1;min-width:0}
+.bname{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bname.dim{color:#aaa}
+.bmeta{font-size:10px;color:#999;letter-spacing:.04em;margin-top:1px}
+.bamt{font-weight:700;font-size:13px;white-space:nowrap}
+.bamt.flex-c{color:#7a3f00}
+.bamt.dim{color:#aaa}
+.amt-input{border:none;border-bottom:2px solid #111;background:transparent;font-family:Space Mono,monospace;font-size:13px;font-weight:700;width:64px;text-align:right;outline:none;padding:1px 2px}
+.amt-input:focus{border-bottom:2px solid #E8157A;background:#FFF9C4}
+.amt-input.flex-c{color:#7a3f00}
+.amt-input.dim{color:#aaa}
+
+/* projections */
+.proj-item{background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:6px}
+.proj-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.proj-title{font-size:13px;font-weight:700}
+.proj-del{font-size:11px;color:#E8157A;cursor:pointer;font-weight:700;border:none;background:none;font-family:'Space Mono',monospace}
+.proj-q{font-size:11px;color:#888;margin-bottom:6px;font-style:italic}
+.proj-body{font-size:12px;line-height:1.6}
+.proj-impact{font-size:11px;color:#BA7517;font-weight:700;margin-top:5px}
+.proj-date{font-size:10px;color:#aaa;letter-spacing:.06em;margin-top:4px}
+.save-btn{border:2.5px solid #111;background:#FFD600;padding:6px 12px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px}
+.save-btn:hover{background:#111;color:#FFD600}
+.empty-state{font-size:12px;color:#888;padding:20px 0;text-align:center}
+
+/* AI advisor */
+.ai-section{margin-top:0}
+.ai-label{font-size:10px;letter-spacing:.13em;font-weight:700;margin-bottom:8px}
+.qchips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.qchip{border:2px solid #111;background:#fff;padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer}
+.qchip:hover{background:#111;color:#FFD600}
+.input-row{display:flex}
+.input-row input{flex:1;border:2.5px solid #111;border-right:none;padding:9px 10px;font-family:'Space Mono',monospace;font-size:12px;background:#fff;outline:none;min-width:0}
+.input-row input:focus{background:#FFFDE0}
+.ask-btn{border:2.5px solid #111;background:#111;color:#FFD600;padding:9px 14px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer}
+.ask-btn:hover{background:#333}
+.ai-bubble{background:#fff;border:2.5px solid #111;padding:12px;margin-top:6px;font-size:12px;line-height:1.65}
+.ai-bubble .al{font-size:9px;letter-spacing:.12em;font-weight:700;color:#E8157A;margin-bottom:5px}
+.thinking{color:#888;font-size:12px;padding:8px 0;font-style:italic}
+
+/* bottom nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#FFD600;border-top:3px solid #111;display:flex;max-width:420px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="top-bar">
+  <span class="brand">CASHFLOW</span>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button id="install-btn" onclick="triggerInstall()" style="border:2px solid #111;background:#111;color:#FFD600;font-family:Space Mono,monospace;font-size:10px;font-weight:700;padding:4px 10px;cursor:pointer">+ INSTALL</button>
+    <span class="date-lbl" id="date-lbl"></span>
+  </div>
+</div>
+
+<div class="cycle-strip" id="cycle-strip"></div>
+
+<!-- HERO: Real Balance -->
+<div class="hero-card">
+  <div class="hero-label">REAL BALANCE</div>
+  <div class="real-num pos" id="real-num">—</div>
+  <div class="hero-sub">
+    <span>BANK <b id="display-bank">—</b></span>
+    <span>BILLS DUE <b id="display-bills">—</b></span>
+  </div>
+  <div class="alert-bar" id="alert-bar">—</div>
+  <div class="two-chips">
+    <div class="chip cyan">
+      <div class="cl">SAFE TODAY</div>
+      <div class="cv" id="chip-safe">—</div>
+      <div class="cs" id="chip-safe-note">per day, fixed bills aside</div>
+    </div>
+    <div class="chip pink">
+      <div class="cl">NEXT PAY</div>
+      <div class="cv" id="chip-nextpay">—</div>
+      <div class="cs" id="chip-days">—</div>
+    </div>
+  </div>
+  <div class="bank-row">
+    <span class="bank-label">UPDATE BANK BALANCE</span>
+    <input class="bank-input" type="number" id="bank-input" placeholder="$0.00" />
+  </div>
+</div>
+
+<!-- PROJECTION CHART -->
+<div class="graph-card">
+  <div class="graph-label">6-PERIOD PROJECTION</div>
+  <div class="graph-wrap">
+    <canvas id="proj-chart" role="img" aria-label="6-period projected closing balance">Loading chart.</canvas>
+  </div>
+</div>
+
+<!-- TABS -->
+<!-- TODAY TAB -->
+<div class="pane active" id="pane-today">
+  <div class="section-hdr">
+    <span>THIS CYCLE — BILLS</span>
+    <span id="remaining-count">—</span>
+  </div>
+  <div id="bill-list-today"></div>
+
+  <div class="ai-section" style="margin-top:14px">
+    <div class="ai-label">WHAT IF I SPEND...</div>
+    <div class="qchips">
+      <span class="qchip" onclick="ask('What if I spend $200 on shoes today?')">$200 shoes</span>
+      <span class="qchip" onclick="ask('What if I skip Spotify and Claude Pro this cycle?')">skip streaming</span>
+      <span class="qchip" onclick="ask('What if rent goes up $100 this month?')">rent +$100</span>
+      <span class="qchip" onclick="ask('What if I spend an extra $300 on staycation?')">staycation splurge</span>
+      <span class="qchip" onclick="ask('Which bills can I safely skip if things get tight?')">what can I skip?</span>
+    </div>
+    <div class="input-row">
+      <input type="text" id="q-in" placeholder="What if I spend $X on..." />
+      <button class="ask-btn" onclick="submitQ()">ASK ↗</button>
+    </div>
+    <div id="ai-out"></div>
+  </div>
+</div>
+
+<!-- BILLS TAB -->
+<div class="pane" id="pane-bills">
+  <div class="section-hdr">
+    <span>ALL BILLS — PAID</span>
+    <span id="paid-count">—</span>
+  </div>
+  <div id="bill-list-paid"></div>
+</div>
+
+
+<!-- SIMULATE TAB -->
+<div class="pane" id="pane-sim">
+  <div class="section-hdr"><span>SIMULATE SPENDING</span><span id="sim-reset" style="cursor:pointer;color:#E8157A" onclick="simReset()">RESET ×</span></div>
+
+  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">EXTRA ONE-TIME SPEND</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <input id="sim-label" type="text" placeholder="e.g. shoes, dinner..." style="flex:1;border:2px solid #111;padding:6px 8px;font-family:Space Mono,monospace;font-size:12px;background:#fff;outline:none" />
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:22px;font-weight:700">$</span>
+      <input id="sim-amount" type="range" min="0" max="500" step="5" value="0" style="flex:1" oninput="simUpdate()" />
+      <span id="sim-amt-out" style="font-size:18px;font-weight:700;min-width:48px">$0</span>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">SKIP FLEXIBLE BILLS</div>
+    <div id="sim-flex-toggles"></div>
+  </div>
+
+  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:6px">GROCERIES THIS CYCLE</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <input id="sim-groceries" type="range" min="0" max="400" step="10" value="200" style="flex:1" oninput="simUpdate()" />
+      <span id="sim-groc-out" style="font-size:14px;font-weight:700;min-width:48px">$200</span>
+    </div>
+  </div>
+
+  <div style="background:#111;color:#FFD600;border:2.5px solid #111;padding:14px;margin-bottom:8px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#FFD600;opacity:.7;margin-bottom:6px">SIMULATED REAL BALANCE</div>
+    <div id="sim-result" style="font-size:34px;font-weight:700">—</div>
+    <div id="sim-breakdown" style="font-size:11px;opacity:.8;margin-top:4px">—</div>
+  </div>
+
+  <div style="background:#fff;border:2.5px solid #111;padding:12px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">IMPACT ON ALL CYCLES</div>
+    <div class="graph-wrap" style="height:90px"><canvas id="sim-chart" role="img" aria-label="Simulated projection">—</canvas></div>
+  </div>
+</div>
+
+<!-- AI PROJECTION TAB -->
+<div class="pane" id="pane-aiproj">
+
+  <!-- ENGINE TOGGLE -->
+  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">AI ENGINE</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+      <button id="btn-gemini" onclick="setEngine('gemini')" style="border:2.5px solid #111;background:#111;color:#FFD600;font-family:Space Mono,monospace;font-size:12px;font-weight:700;padding:10px;cursor:pointer">
+        ✦ GEMINI<br><span style="font-size:9px;font-weight:400;opacity:.7">cloud · fast</span>
+      </button>
+      <button id="btn-webllm" onclick="setEngine('webllm')" style="border:2.5px solid #111;background:#fff;color:#111;font-family:Space Mono,monospace;font-size:12px;font-weight:700;padding:10px;cursor:pointer">
+        ◈ ON-DEVICE<br><span style="font-size:9px;font-weight:400;opacity:.6">offline · private</span>
+      </button>
+    </div>
+    <div id="engine-status" style="font-size:11px;color:#888;min-height:16px"></div>
+    <div id="webllm-load-wrap" style="display:none;margin-top:8px">
+      <button class="ask-btn" style="width:100%" onclick="loadWebLLM()">DOWNLOAD MODEL (~1.4GB) ↗</button>
+      <div style="font-size:10px;color:#888;margin-top:4px">One-time. Cached forever. Fully offline after.</div>
+      <div id="webllm-progress" style="margin-top:8px;display:none">
+        <div style="background:#f0f0f0;border:2px solid #111;height:8px;margin-bottom:4px">
+          <div id="webllm-bar" style="height:100%;background:#111;width:0%;transition:width .3s"></div>
+        </div>
+        <div id="webllm-pct" style="font-size:11px;font-weight:700">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYSE BUTTON -->
+  <div style="background:#fff;border:2.5px solid #111;padding:14px;margin-bottom:8px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">FULL CASHFLOW ANALYSIS</div>
+    <button class="ask-btn" style="width:100%;text-align:center" onclick="runAiProjection()">ANALYSE MY CASHFLOW ↗</button>
+  </div>
+  <div id="aiproj-out"></div>
+
+  <!-- SPECIFIC QUESTIONS -->
+  <div style="margin-top:8px;background:#fff;border:2.5px solid #111;padding:14px">
+    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">ASK SOMETHING SPECIFIC</div>
+    <div class="qchips" style="margin-bottom:8px">
+      <span class="qchip" onclick="runAiQ('What are my 3 biggest cashflow risks in the next 8 weeks?')">biggest risks</span>
+      <span class="qchip" onclick="runAiQ('If I want to save $300 by August, what do I need to cut?')">save $300</span>
+      <span class="qchip" onclick="runAiQ('Which cycle will be hardest and what should I do before it hits?')">hardest cycle</span>
+      <span class="qchip" onclick="runAiQ('Give me a strict week-by-week spending plan for the staycation.')">staycation plan</span>
+    </div>
+    <div class="input-row">
+      <input type="text" id="aiproj-q" placeholder="Ask your AI advisor..." />
+      <button class="ask-btn" onclick="runAiQ(document.getElementById('aiproj-q').value)">ASK ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVED PROJECTIONS TAB -->
+<div class="pane" id="pane-projections">
+  <div class="section-hdr"><span>SAVED PROJECTIONS</span></div>
+  <div id="proj-list"></div>
+</div>
+
+<div class="nav-tabs">
+  <button class="ntab active" onclick="switchTab('today')">TODAY</button>
+  <button class="ntab" onclick="switchTab('bills')">BILLS</button>
+  <button class="ntab" onclick="switchTab('sim')">SIM</button>
+  <button class="ntab" onclick="switchTab('aiproj')">AI ✦</button>
+  <button class="ntab" onclick="switchTab('projections')">SAVED</button>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script type="module">
+  import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+  window.WebLLM = webllm;
+</script>
+<script>
+const GEMINI_KEY = 'AIzaSyAnAaV0OBrMSKX8Ie_Kl-IpIQh-6Th45nI';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
+
+const PAY = 1790;
+
+/* ── PERIODS ── */
+const periods = [
+  {label:'Jun 19',nextPay:'Jul 3',nextPayDate:'2026-07-03',shortCtx:'staycation',rent:false,vac:true,bills:[
+    {name:'Daycamp (last)',amt:127,type:'fixed',due:'JUN 19',paid:false},
+    {name:'Janelle birthday',amt:200,type:'flex',due:'JUN 19',paid:false},
+    {name:'Fizz internet',amt:55,type:'fixed',due:'JUN 23',paid:false},
+    {name:'PlayStation',amt:20,type:'fixed',due:'JUN 19',paid:false},
+    {name:'Amazon',amt:12,type:'fixed',due:'JUN 24',paid:false},
+    {name:'Groceries',amt:200,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
+    {name:'Staycation extra',amt:150,type:'flex',due:'THIS CYCLE',paid:false},
+  ]},
+  {label:'Jul 3',nextPay:'Jul 17',nextPayDate:'2026-07-17',shortCtx:'rent · tight',rent:true,vac:false,bills:[
+    {name:'Rent + buffer',amt:1050,type:'fixed',due:'JUL 1-4',paid:false},
+    {name:'Daycare',amt:205,type:'flex',due:'JUL 1',paid:false},
+    {name:'Gemini',amt:27,type:'fixed',due:'JUL 3',paid:false},
+    {name:'Iegeek',amt:5,type:'fixed',due:'JUL 9',paid:false},
+    {name:'Claude Pro',amt:9,type:'flex',due:'JUL 9',paid:false},
+    {name:'Spotify',amt:12,type:'flex',due:'JUL 12',paid:false},
+    {name:'Amazon',amt:12,type:'fixed',due:'MID-JUL',paid:false},
+    {name:'Groceries',amt:200,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
+  ]},
+  {label:'Jul 17',nextPay:'Jul 31',nextPayDate:'2026-07-31',shortCtx:'lighter',rent:false,vac:false,bills:[
+    {name:'Rogers',amt:170,type:'flex',due:'MID-JUL',paid:false},
+    {name:'Monitor loan',amt:130,type:'flex',due:'MONTHLY',paid:false},
+    {name:'PlayStation',amt:20,type:'fixed',due:'JUL 19',paid:false},
+    {name:'Fizz internet',amt:55,type:'fixed',due:'JUL 23',paid:false},
+    {name:'Amazon',amt:12,type:'fixed',due:'JUL 24',paid:false},
+    {name:'Medication',amt:30,type:'fixed',due:'~JUL 17',paid:false},
+    {name:'Groceries',amt:200,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
+  ]},
+  {label:'Jul 31',nextPay:'Aug 14',nextPayDate:'2026-08-14',shortCtx:'rent · tight',rent:true,vac:false,bills:[
+    {name:'Rent + buffer',amt:1050,type:'fixed',due:'AUG 1-4',paid:false},
+    {name:'Daycare',amt:205,type:'flex',due:'AUG 1',paid:false},
+    {name:'Gemini',amt:27,type:'fixed',due:'AUG 3',paid:false},
+    {name:'Iegeek',amt:5,type:'fixed',due:'AUG 9',paid:false},
+    {name:'Claude Pro',amt:9,type:'flex',due:'AUG 9',paid:false},
+    {name:'Spotify',amt:12,type:'flex',due:'AUG 12',paid:false},
+    {name:'Amazon',amt:12,type:'fixed',due:'MID-AUG',paid:false},
+    {name:'Groceries',amt:200,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
+  ]},
+  {label:'Aug 14',nextPay:'Aug 28',nextPayDate:'2026-08-28',shortCtx:'bday staycation',rent:false,vac:true,bills:[
+    {name:'Rogers',amt:170,type:'flex',due:'MID-AUG',paid:false},
+    {name:'Monitor loan',amt:130,type:'flex',due:'MONTHLY',paid:false},
+    {name:'PlayStation',amt:20,type:'fixed',due:'AUG 19',paid:false},
+    {name:'Fizz internet',amt:55,type:'fixed',due:'AUG 23',paid:false},
+    {name:'Amazon',amt:12,type:'fixed',due:'AUG 24',paid:false},
+    {name:'Medication',amt:30,type:'fixed',due:'~AUG 14',paid:false},
+    {name:'Groceries',amt:200,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
+    {name:'Birthday extra',amt:200,type:'flex',due:'AUG 15-24',paid:false},
+  ]},
+  {label:'Aug 28',nextPay:'Sep 11',nextPayDate:'2026-09-11',shortCtx:'rent · post-bday',rent:true,vac:false,bills:[
+    {name:'Rent + buffer',amt:1050,type:'fixed',due:'SEP 1-4',paid:false},
+    {name:'Daycare',amt:205,type:'flex',due:'SEP 1',paid:false},
+    {name:'Gemini',amt:27,type:'fixed',due:'SEP 3',paid:false},
+    {name:'Iegeek',amt:5,type:'fixed',due:'SEP 9',paid:false},
+    {name:'Claude Pro',amt:9,type:'flex',due:'SEP 9',paid:false},
+    {name:'Spotify',amt:12,type:'flex',due:'SEP 12',paid:false},
+    {name:'Amazon',amt:12,type:'fixed',due:'MID-SEP',paid:false},
+    {name:'Groceries',amt:200,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
+    {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
+  ]}
+];
+
+/* ── STATE ── */
+let S = {
+  bank: 1790,
+  selected: 0,
+  paidMap: periods.map(p => p.bills.map(() => false)),
+  savedProjections: []
+};
+function loadState(){ try{ const s=localStorage.getItem('cf-v1'); if(s){ const p=JSON.parse(s); S.bank=p.bank||1790; S.paidMap=p.paidMap||S.paidMap; S.savedProjections=p.savedProjections||[]; S.selected=p.selected||0; } }catch(e){} }
+function saveState(){ localStorage.setItem('cf-v1', JSON.stringify({bank:S.bank,paidMap:S.paidMap,savedProjections:S.savedProjections,selected:S.selected})); }
+loadState();
+
+/* ── MATH (Note$ logic) ──
+   real = bank - unpaid bills THIS cycle
+   safe = real / days until next pay
+   Projection per period = PAY - total bills that period
+*/
+function unpaidBills(i){
+  return periods[i].bills.reduce((s,b,j)=> S.paidMap[i][j] ? s : s+b.amt, 0);
+}
+function totalBills(i){ return periods[i].bills.reduce((s,b)=>s+b.amt,0); }
+
+/* Projected starting bank for any cycle:
+   cycle 0 = real S.bank (current actual balance)
+   cycle N = PAY only (fresh start, assume previous cycle spent down to zero) */
+function projectedBank(i){
+  if(i === 0) return S.bank;
+  return PAY;
+}
+
+function real(){ return projectedBank(S.selected) - unpaidBills(S.selected); }
+function daysUntilPay(){
+  const now = new Date(); now.setHours(0,0,0,0);
+  const np = new Date(periods[S.selected].nextPayDate); np.setHours(0,0,0,0);
+  return Math.max(Math.round((np-now)/86400000), 1);
+}
+function safePerDay(){
+  const bank = projectedBank(S.selected);
+  const fixedThisCycle = periods[S.selected].bills
+    .filter(b => b.type === 'fixed')
+    .reduce((s,b) => s + b.amt, 0);
+  const afterFixed = bank - fixedThisCycle;
+  if(afterFixed <= 0) return 0;
+  return afterFixed / daysUntilPay();
+}
+
+function calcProjectionNets(){
+  /* Period 0: closing = bank - unpaidBills (current cycle, actual balance)
+     Period N: closing = PAY - totalBills (fresh start, no carryover) */
+  return periods.map((p,i) => {
+    if(i === 0) return Math.round(S.bank - unpaidBills(0));
+    return Math.round(PAY - totalBills(i));
+  });
+}
+
+function $n(n){ return (n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString(); }
+function amtCls(n){ return n>=200?'pos':n>=0?'warn':'neg'; }
+
+/* ── STRIP ── */
+function buildStrip(){
+  const el=document.getElementById('cycle-strip');
+  el.innerHTML='';
+  periods.forEach((p,i)=>{
+    const d=document.createElement('div');
+    let cls='cpill'+(p.rent?' rent':p.vac?' vac':'')+(i===S.selected?' active':'');
+    d.className=cls; d.textContent=p.label;
+    d.onclick=()=>{ S.selected=i; saveState(); refresh(); };
+    el.appendChild(d);
+  });
+}
+
+/* ── HERO ── */
+function buildHero(){
+  const r=real(), sf=safePerDay(), d=daysUntilPay();
+  const ub=unpaidBills(S.selected);
+  const pb=projectedBank(S.selected);
+  document.getElementById('real-num').textContent=$n(r);
+  document.getElementById('real-num').className='real-num '+amtCls(r);
+  document.getElementById('display-bank').textContent=S.selected===0?$n(S.bank):$n(pb)+' proj.';
+  document.getElementById('display-bills').textContent=$n(ub);
+  document.getElementById('bank-input').value=S.bank;
+
+  const alert=document.getElementById('alert-bar');
+  if(r<0){ alert.textContent=$n(Math.abs(r))+' SHORT — BILLS EXCEED BALANCE'; alert.className='alert-bar show'; }
+  else if(r<200){ alert.textContent='LOW BUFFER — ONLY '+$n(r)+' AFTER BILLS'; alert.className='alert-bar show'; }
+  else{ alert.className='alert-bar'; }
+
+  document.getElementById('chip-safe').textContent=$n(sf);
+  document.getElementById('chip-nextpay').textContent=periods[S.selected].nextPay;
+  document.getElementById('chip-days').textContent=d+' day'+(d===1?'':'s')+' away';
+}
+
+/* ── CHART ── */
+let chart=null;
+function buildChart(){
+  const nets=calcProjectionNets();
+  const colors=nets.map(n=>n>=500?'#3B6D11':n>=0?'#BA7517':'#E24B4A');
+  const ctx=document.getElementById('proj-chart').getContext('2d');
+  if(chart) chart.destroy();
+  chart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:periods.map(p=>p.label),
+      datasets:[{data:nets,backgroundColor:colors,borderColor:'#111',borderWidth:2,borderRadius:0}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString()}}},
+      scales:{
+        x:{ticks:{font:{family:'Space Mono',size:10},color:'#444',autoSkip:false,maxRotation:0},grid:{display:false},border:{color:'#111',width:2}},
+        y:{ticks:{font:{family:'Space Mono',size:10},color:'#888',callback:v=>'$'+v},grid:{color:'rgba(0,0,0,0.07)'},border:{display:false},beginAtZero:false}
+      }
+    }
+  });
+}
+
+/* ── BILLS TODAY ── */
+function buildBillsToday(){
+  const p=periods[S.selected];
+  const el=document.getElementById('bill-list-today');
+  el.innerHTML='';
+  const unpaid=S.paidMap[S.selected].filter(v=>!v).length;
+  document.getElementById('remaining-count').textContent=unpaid+' REMAINING';
+  p.bills.forEach((b,j)=>{
+    const isPaid=S.paidMap[S.selected][j];
+    const d=document.createElement('div');
+    d.className='bill-item'+(isPaid?' is-paid':'');
+    const amtCls='amt-input'+(b.type==='flex'?' flex-c':'')+(isPaid?' dim':'');
+    d.innerHTML=`
+      <div class="bcheck${isPaid?' on':''}" onclick="togglePaid(${S.selected},${j})">${isPaid?'✓':''}</div>
+      <div class="binfo">
+        <div class="bname${isPaid?' dim':''}">${b.name}</div>
+        <div class="bmeta">${b.due}${b.type==='flex'?' · FLEXIBLE':''}</div>
+      </div>
+      <input class="${amtCls}" type="number" value="${b.amt}" min="0" step="1"
+        onchange="updateAmt(${S.selected},${j},this.value)"
+        onclick="this.select()" />`;
+    el.appendChild(d);
+  });
+}
+
+/* ── BILLS PAID TAB ── */
+function buildBillsPaid(){
+  const el=document.getElementById('bill-list-paid');
+  el.innerHTML='';
+  let paidCount=0;
+  periods.forEach((p,pi)=>{
+    p.bills.forEach((b,bi)=>{
+      if(S.paidMap[pi][bi]){
+        paidCount++;
+        const d=document.createElement('div');
+        d.className='bill-item is-paid';
+        d.innerHTML=`
+          <div class="bcheck on" onclick="togglePaid(${pi},${bi})">✓</div>
+          <div class="binfo">
+            <div class="bname dim">${b.name}</div>
+            <div class="bmeta">${p.label} · ${b.due}</div>
+          </div>
+          <div class="bamt dim">$${b.amt}</div>`;
+        el.appendChild(d);
+      }
+    });
+  });
+  document.getElementById('paid-count').textContent=paidCount+' PAID';
+  if(paidCount===0) el.innerHTML='<div class="empty-state">Nothing marked paid yet.</div>';
+}
+
+/* ── SAVED PROJECTIONS ── */
+function buildProjections(){
+  const el=document.getElementById('proj-list');
+  el.innerHTML='';
+  if(S.savedProjections.length===0){
+    el.innerHTML='<div class="empty-state">No saved projections yet.<br>Ask "What if..." and save the answer.</div>';
+    return;
+  }
+  S.savedProjections.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='proj-item';
+    d.innerHTML=`
+      <div class="proj-head">
+        <div class="proj-title">${p.label||'Projection'}</div>
+        <button class="proj-del" onclick="deleteProjection(${i})">DELETE ×</button>
+      </div>
+      <div class="proj-q">"${p.question}"</div>
+      <div class="proj-body">${p.answer}</div>
+      <div class="proj-date">${p.date} · cycle: ${p.cycle}</div>`;
+    el.appendChild(d);
+  });
+}
+
+window.deleteProjection=function(i){
+  S.savedProjections.splice(i,1);
+  saveState();
+  buildProjections();
+};
+
+window.togglePaid=function(pi,bi){
+  S.paidMap[pi][bi]=!S.paidMap[pi][bi];
+  saveState();
+  buildHero();
+  buildBillsToday();
+  buildBillsPaid();
+  buildChart();
+};
+
+window.updateAmt=function(pi,bi,val){
+  const v=parseFloat(val);
+  if(isNaN(v)||v<0) return;
+  periods[pi].bills[bi].amt=Math.round(v);
+  saveState();
+  buildHero();
+  buildChart();
+  buildSim && buildSim();
+  document.getElementById('remaining-count').textContent=
+    S.paidMap[pi].filter(v=>!v).length+' REMAINING';
+};
+
+/* ── TABS ── */
+let currentTab='today';
+window.switchTab=function(t){
+  currentTab=t;
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pane-'+t).classList.add('active');
+  const tabs=['today','bills','sim','aiproj','projections'];
+  document.querySelectorAll('.ntab')[tabs.indexOf(t)].classList.add('active');
+  if(t==='bills') buildBillsPaid();
+  if(t==='projections') buildProjections();
+  if(t==='sim') buildSim();
+};
+
+/* ── BANK INPUT ── */
+document.getElementById('bank-input').addEventListener('change',function(){
+  const v=parseFloat(this.value);
+  if(!isNaN(v)){ S.bank=v; saveState(); refresh(); }
+});
+
+/* ── GEMINI ── */
+function buildContext(){
+  const nets=calcProjectionNets();
+  const snap=periods.map((p,i)=>`${p.label} (${p.shortCtx}): net $${nets[i]}`).join(', ');
+  const cur=periods[S.selected];
+  const r=real(), ub=unpaidBills(S.selected), sf=safePerDay();
+  return `You are a direct cashflow advisor for Maciek. His bank balance right now: $${S.bank}. Unpaid bills this cycle: $${ub}. Real balance (bank minus unpaid bills): $${Math.round(r)}. Safe to spend per day: $${Math.round(sf)}. Biweekly pay: $${PAY}. 6-period projection: ${snap}. Currently viewing: ${cur.label} (${cur.shortCtx}). Rent periods (Jul 3, Jul 31, Aug 28) are very tight — rent+daycare+Gemini = $1,282 out of $1,790. He has staycations Jun 19 and Aug 14 (his birthday). Skippable: Claude Pro $9, Spotify $12, clothing $200. Cannot skip: Gemini $27, non-alc beer $56, medication $30. Answer in 2-4 sentences max. Be specific: name the period, the new balance after the spend, one concrete suggestion. Casual and direct tone. No lists, no headers.`;
+}
+
+let lastQ='', lastA='';
+
+async function ask(q){
+  document.getElementById('q-in').value=q;
+  await submitQ();
+}
+
+async function submitQ(){
+  const q=document.getElementById('q-in').value.trim();
+  if(!q) return;
+  document.getElementById('q-in').value='';
+  lastQ=q;
+  const out=document.getElementById('ai-out');
+  out.innerHTML='<div class="thinking">thinking...</div>';
+
+  try{
+    const res=await fetch(GEMINI_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[
+          {role:'user',parts:[{text:buildContext()+'\n\nUSER: '+q}]}
+        ],
+        generationConfig:{maxOutputTokens:300,temperature:0.7}
+      })
+    });
+    const data=await res.json();
+    const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'No response from Gemini.';
+    lastA=text;
+
+    out.innerHTML=`
+      <div class="ai-bubble">
+        <div class="al">GEMINI</div>
+        ${text}
+        <br><button class="save-btn" onclick="saveProjection()">SAVE THIS PROJECTION ↓</button>
+      </div>`;
+  }catch(e){
+    out.innerHTML=`<div class="ai-bubble"><div class="al" style="color:#E8157A">ERROR</div>${e.message}<br><small style="color:#888">If running from file://, push to GitHub Pages to fix CORS.</small></div>`;
+  }
+}
+
+window.saveProjection=function(){
+  if(!lastA) return;
+  const now=new Date().toLocaleDateString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  S.savedProjections.unshift({
+    question:lastQ,
+    answer:lastA,
+    label:lastQ.substring(0,40),
+    date:now,
+    cycle:periods[S.selected].label
+  });
+  saveState();
+  buildProjections();
+  switchTab('projections');
+};
+
+document.getElementById('q-in').addEventListener('keydown',e=>{ if(e.key==='Enter') submitQ(); });
+
+/* ── SIMULATE ── */
+let simSkipped = {};
+let simChart = null;
+
+function buildSim(){
+  const p = periods[S.selected];
+  const flexBills = p.bills.filter(b=>b.type==='flex' && !b.name.includes('Groceries'));
+  const el = document.getElementById('sim-flex-toggles');
+  el.innerHTML = flexBills.map(b=>{
+    const key = b.name;
+    const skipped = simSkipped[key] || false;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid #eee;font-size:13px">
+      <span style="color:${skipped?'#aaa':'#111'}">${b.name} <span style="color:#BA7517;font-size:11px">$${b.amt}</span></span>
+      <button onclick="simToggle('${key}')" style="border:2px solid #111;background:${skipped?'#111':'#fff'};color:${skipped?'#FFD600':'#111'};font-family:Space Mono,monospace;font-size:10px;font-weight:700;padding:3px 10px;cursor:pointer">${skipped?'SKIPPED':'SKIP'}</button>
+    </div>`;
+  }).join('');
+  simUpdate();
+}
+
+window.simToggle=function(key){
+  simSkipped[key] = !simSkipped[key];
+  buildSim();
+};
+
+window.simReset=function(){
+  simSkipped={};
+  document.getElementById('sim-amount').value=0;
+  document.getElementById('sim-label').value='';
+  document.getElementById('sim-groceries').value=200;
+  buildSim();
+};
+
+function simUpdate(){
+  const extra = parseInt(document.getElementById('sim-amount').value)||0;
+  const grocAmt = parseInt(document.getElementById('sim-groceries').value)||200;
+  document.getElementById('sim-amt-out').textContent='$'+extra;
+  document.getElementById('sim-groc-out').textContent='$'+grocAmt;
+
+  const p = periods[S.selected];
+  // calc simulated bills
+  let simBills = 0;
+  p.bills.forEach(b=>{
+    if(b.name.includes('Groceries')){ simBills += grocAmt; return; }
+    if(simSkipped[b.name]) return;
+    simBills += b.amt;
+  });
+  simBills += extra;
+
+  const fixedOnly = p.bills.filter(b=>b.type==='fixed').reduce((s,b)=>s+b.amt,0);
+  const simReal = S.bank - simBills;
+  const simSafe = Math.max(0,(S.bank - fixedOnly - extra) / daysUntilPay());
+
+  const el = document.getElementById('sim-result');
+  el.textContent = (simReal>=0?'$':'-$')+Math.abs(Math.round(simReal)).toLocaleString();
+  el.style.color = simReal>=200?'#FFD600':simReal>=0?'#EF9F27':'#E8157A';
+
+  const saved = Object.keys(simSkipped).filter(k=>simSkipped[k]);
+  const savedAmt = p.bills.filter(b=>simSkipped[b.name]).reduce((s,b)=>s+b.amt,0);
+  const grocDiff = 200-grocAmt;
+  document.getElementById('sim-breakdown').textContent =
+    'bills $'+Math.round(simBills)+
+    (extra>0?' · extra -$'+extra:'')+
+    (savedAmt>0?' · skipped +$'+savedAmt:'')+
+    (grocDiff!==0?' · groceries '+(grocDiff>0?'+':'')+grocDiff:'');
+
+  // sim chart — show all periods with this cycle adjusted
+  const nets = calcProjectionNets().map((n,i)=> i===S.selected ? Math.round(S.bank - simBills) : n);
+  const colors = nets.map(n=>n>=500?'#3B6D11':n>=0?'#BA7517':'#E24B4A');
+  const ctx = document.getElementById('sim-chart').getContext('2d');
+  if(simChart) simChart.destroy();
+  simChart = new Chart(ctx,{
+    type:'bar',
+    data:{labels:periods.map(p=>p.label),datasets:[{data:nets,backgroundColor:colors,borderColor:'#111',borderWidth:2,borderRadius:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString()}}},
+      scales:{x:{ticks:{font:{family:'Space Mono',size:9},color:'#444',autoSkip:false,maxRotation:0},grid:{display:false},border:{color:'#111',width:1}},
+              y:{ticks:{font:{family:'Space Mono',size:9},color:'#888',callback:v=>'$'+v},grid:{color:'rgba(0,0,0,0.06)'},border:{display:false},beginAtZero:false}}}
+  });
+}
+
+/* ── AI ENGINE ── */
+let lastAiAnswer="", lastAiQuestion="";
+let currentEngine = 'gemini'; // 'gemini' | 'webllm'
+let webllmEngine = null;
+let webllmReady = false;
+
+function setEngine(e){
+  currentEngine = e;
+  const bg = '#111', fg = '#FFD600', bg2 = '#fff', fg2 = '#111';
+  document.getElementById('btn-gemini').style.background = e==='gemini'?bg:bg2;
+  document.getElementById('btn-gemini').style.color = e==='gemini'?fg:fg2;
+  document.getElementById('btn-webllm').style.background = e==='webllm'?bg:bg2;
+  document.getElementById('btn-webllm').style.color = e==='webllm'?fg:fg2;
+  const statusEl = document.getElementById('engine-status');
+  const loadWrap = document.getElementById('webllm-load-wrap');
+  if(e==='gemini'){
+    statusEl.textContent = '✦ Gemini Flash — cloud, needs internet';
+    loadWrap.style.display='none';
+  } else {
+    if(webllmReady){
+      statusEl.textContent = '◈ On-device model ready — fully offline';
+      loadWrap.style.display='none';
+    } else {
+      statusEl.textContent = '◈ Model not downloaded yet';
+      loadWrap.style.display='block';
+    }
+  }
+}
+
+async function loadWebLLM(){
+  const statusEl = document.getElementById('engine-status');
+  const progressWrap = document.getElementById('webllm-progress');
+  const bar = document.getElementById('webllm-bar');
+  const pct = document.getElementById('webllm-pct');
+  const loadBtn = document.getElementById('webllm-load-wrap').querySelector('button');
+
+  if(!window.WebLLM){ 
+    statusEl.textContent = 'WebLLM not loaded yet, try again in a moment.';
+    return; 
+  }
+
+  loadBtn.disabled = true;
+  loadBtn.textContent = 'DOWNLOADING...';
+  progressWrap.style.display='block';
+  statusEl.textContent = 'Starting download...';
+
+  try{
+    webllmEngine = await window.WebLLM.CreateMLCEngine('gemma-2-2b-it-q4f32_1-MLC', {
+      initProgressCallback: (p) => {
+        const prog = Math.round((p.progress||0)*100);
+        bar.style.width = prog+'%';
+        pct.textContent = prog+'% — '+( p.text||'loading...' );
+        statusEl.textContent = 'Downloading: '+prog+'%';
+      }
+    });
+    webllmReady = true;
+    statusEl.textContent = '◈ On-device model ready — fully offline';
+    progressWrap.style.display='none';
+    document.getElementById('webllm-load-wrap').style.display='none';
+  } catch(err){
+    statusEl.textContent = 'Download failed: '+err.message;
+    loadBtn.disabled=false;
+    loadBtn.textContent='RETRY DOWNLOAD ↗';
+  }
+}
+
+async function queryAI(prompt){
+  if(currentEngine==='gemini'){
+    const res = await fetch(GEMINI_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{role:'user',parts:[{text:prompt}]}],
+        generationConfig:{maxOutputTokens:500,temperature:0.7}
+      })
+    });
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from Gemini.';
+  } else {
+    if(!webllmReady || !webllmEngine) throw new Error('On-device model not loaded. Download it first.');
+    const reply = await webllmEngine.chat.completions.create({
+      messages:[{role:'user',content:prompt}],
+      max_tokens:500,
+      temperature:0.7
+    });
+    return reply.choices[0]?.message?.content || 'No response.';
+  }
+}
+
+
+function buildAiPrompt(specific){
+  const nets = calcProjectionNets();
+  const periodDetails = periods.map((p,i)=>{
+    const fixed = p.bills.filter(b=>b.type==='fixed').reduce((s,b)=>s+b.amt,0);
+    const flex = p.bills.filter(b=>b.type==='flex').reduce((s,b)=>s+b.amt,0);
+    return `${p.label} (${p.shortCtx}): pay $${PAY}, fixed $${fixed}, flex $${flex}, net $${nets[i]}`;
+  }).join(' | ');
+
+  const base = `You are a cashflow analyst for Maciek. Here is his complete financial picture:
+BANK RIGHT NOW: $${S.bank}
+BIWEEKLY PAY: $${PAY}
+REAL BALANCE (bank minus fixed bills this cycle): $${Math.round(real())}
+SAFE PER DAY: $${Math.round(safePerDay())}
+
+6 PAY PERIODS AHEAD:
+${periodDetails}
+
+KEY FACTS:
+- Rent $1,050 hits every Jul 3, Jul 31, Aug 28 paycheck (unavoidable, paid by 3rd-4th of month)
+- Daycare $205 flexible but monthly
+- Non-alc beer $56/cycle cannot be skipped
+- Gemini $27/month cannot be skipped
+- Medication $30 every 28 days cannot be skipped
+- Staycation Jun 19 (2 weeks) and Aug 14-24 (birthday week) — expect higher spending
+- Skippable: Claude Pro $9, Spotify $12, clothing $200
+- Groceries budgeted $200/cycle but often goes over
+
+${specific ? 'USER QUESTION: '+specific : 'Give a full cashflow analysis: identify the 2-3 tightest moments, what to watch out for during staycations, and 3 concrete actionable suggestions to stay healthy. Be direct, specific with numbers, casual tone. Use short paragraphs, no bullet lists.'}`;
+  return base;
+}
+
+async function runAiProjection(){
+  const out = document.getElementById('aiproj-out');
+  const engine = currentEngine==='gemini'?'GEMINI':'ON-DEVICE';
+  out.innerHTML='<div class="thinking">'+engine+' is analysing your cashflow...</div>';
+  try{
+    const text = await queryAI(buildAiPrompt(null));
+    lastAiAnswer=text; lastAiQuestion='Full cashflow analysis';
+    out.innerHTML='<div class="ai-bubble"><div class="al">'+engine+' ANALYSIS</div>'+text.replace(/\n/g,'<br>')+'<br><button class="save-btn" onclick="saveAiProjection(lastAiQuestion,lastAiAnswer)">SAVE ↓</button></div>';
+  }catch(e){
+    out.innerHTML='<div class="ai-bubble"><div class="al" style="color:#E8157A">ERROR</div>'+e.message+'</div>';
+  }
+}
+
+async function runAiQ(q){
+  if(!q||!q.trim()) return;
+  document.getElementById('aiproj-q').value='';
+  const out = document.getElementById('aiproj-out');
+  const engine = currentEngine==='gemini'?'GEMINI':'ON-DEVICE';
+  out.innerHTML='<div class="thinking">'+engine+' thinking...</div>';
+  try{
+    const text = await queryAI(buildAiPrompt(q));
+    lastAiAnswer=text; lastAiQuestion=q;
+    out.innerHTML='<div class="ai-bubble"><div class="al">'+engine+'</div>'+text.replace(/\n/g,'<br>')+'<br><button class="save-btn" onclick="saveAiProjection(lastAiQuestion,lastAiAnswer)">SAVE ↓</button></div>';
+  }catch(e){
+    out.innerHTML='<div class="ai-bubble"><div class="al" style="color:#E8157A">ERROR</div>'+e.message+'</div>';
+  }
+}
+
+window.saveAiProjection=function(q,a){
+  const now=new Date().toLocaleDateString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  S.savedProjections.unshift({question:q,answer:a,label:q.substring(0,40),date:now,cycle:periods[S.selected].label});
+  saveState();
+  buildProjections();
+  switchTab('projections');
+};
+
+document.getElementById('aiproj-q').addEventListener('keydown',e=>{ if(e.key==='Enter') runAiQ(e.target.value); });
+
+
+/* ── MAIN REFRESH ── */
+function refresh(){
+  buildStrip();
+  buildHero();
+  buildBillsToday();
+}
+
+// Dynamic date label
+(function(){
+  const now = new Date();
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('date-lbl').textContent =
+    days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+})();
+
+buildChart();
+refresh();
+
+// PWA service worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('cashflow-sw.js')
+    .then(()=>console.log('SW registered'))
+    .catch(e=>console.log('SW failed:',e));
+}
+
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('install-btn');
+  if(btn) btn.style.display = 'block';
+});
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('install-btn');
+  if(btn) btn.style.display = 'none';
+  deferredInstallPrompt = null;
+});
+window.triggerInstall = async function(){
+  if(!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const { outcome } = await deferredInstallPrompt.userChoice;
+  if(outcome === 'accepted') deferredInstallPrompt = null;
+};
+</script>
+</body>
+</html>
