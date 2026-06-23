@@ -1,9 +1,7 @@
-const CACHE='cashflow-v4';
+const CACHE='cashflow-v5';
 self.addEventListener('install',e=>{
   e.waitUntil(
     caches.open(CACHE).then(c=>c.addAll([
-      '/Cashflow/',
-      '/Cashflow/index.html',
       '/Cashflow/manifest.json',
       '/Cashflow/icon-192.png',
       '/Cashflow/icon-512.png'
@@ -18,8 +16,9 @@ self.addEventListener('activate',e=>{
 });
 self.addEventListener('fetch',e=>{
   const url=new URL(e.request.url);
+  // Always fetch index fresh — never cache it
   if(url.pathname==='/Cashflow/'||url.pathname==='/Cashflow/index.html'){
-    e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
+    e.respondWith(fetch(e.request,{cache:'no-store'}));
     return;
   }
   e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
