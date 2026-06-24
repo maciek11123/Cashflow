@@ -440,7 +440,7 @@ let S = {
 };
 function loadState(){
   try{
-    const s=localStorage.getItem('cf-v1');
+    const s=localStorage.getItem('cf-v2');
     if(s){
       const p=JSON.parse(s);
       S.bank = (p.bank && p.bank > 0) ? p.bank : 1790;
@@ -454,7 +454,7 @@ function loadState(){
     }
   }catch(e){ console.warn('loadState error',e); }
 }
-function saveState(){ localStorage.setItem('cf-v1', JSON.stringify({bank:S.bank,paidMap:S.paidMap,savedProjections:S.savedProjections,selected:S.selected})); }
+function saveState(){ localStorage.setItem('cf-v2', JSON.stringify({bank:S.bank,paidMap:S.paidMap,savedProjections:S.savedProjections,selected:S.selected})); }
 loadState();
 
 /* ── MATH (Note$ logic) ──
