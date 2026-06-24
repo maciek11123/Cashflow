@@ -117,6 +117,46 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 
 /* bottom nav */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#FFD600;border-top:3px solid #111;display:flex;max-width:420px;margin:0 auto}
+
+/* ── PIPELINE ── */
+.pipe-step{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.pipe-step:last-child{border-bottom:none}
+.pipe-icon{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900}
+.pi-bank{background:#000;color:#FFE500}
+.pi-minus{background:#E8157A;color:#fff}
+.pi-free{background:#00DDCC;color:#000}
+.pi-pay{background:#00CC66;color:#fff}
+.pi-close{background:#333;color:#FFE500}
+.pi-what{background:#FF8C00;color:#fff}
+.pipe-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;color:#888}
+.pipe-val{font-size:20px;font-weight:900;line-height:1.1}
+.pipe-val.neg{color:#E8157A}
+.pipe-val.pos{color:#00AA55}
+.pipe-val.big{font-size:26px}
+.pipe-sub{font-size:10px;color:#aaa;margin-top:2px}
+.pipe-conn{width:2px;height:10px;background:#e0e0e0;margin-left:15px}
+
+/* ── WHAT IF ── */
+.wi-fab{position:fixed;bottom:72px;right:16px;background:#FF8C00;color:#fff;border:none;border-radius:999px;padding:12px 18px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:90}
+.wi-fab.hidden{display:none}
+.wi-sheet{position:fixed;bottom:0;left:0;right:0;background:#111;color:#fff;border-top:3px solid #FFE500;padding:16px;z-index:100;transform:translateY(100%);transition:transform .25s ease;max-height:70vh;overflow-y:auto}
+.wi-sheet.open{transform:translateY(0)}
+.wi-sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.wi-sheet-title{font-size:11px;font-weight:700;letter-spacing:.12em;color:#FFE500}
+.wi-sheet-close{background:none;border:none;color:#888;font-size:20px;cursor:pointer;font-family:'Space Mono',monospace}
+.wi-input{background:#222;border:2px solid #444;border-radius:4px;color:#fff;font-family:'Space Mono',monospace;font-size:20px;font-weight:900;padding:9px 11px;outline:none;width:100%}
+.wi-input:focus{border-color:#FFE500}
+.wi-cycles{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.wi-cycle-btn{background:#222;border:2px solid #444;border-radius:999px;color:#aaa;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em;padding:6px 12px;cursor:pointer}
+.wi-cycle-btn.active{background:#FFE500;color:#000;border-color:#FFE500}
+.wi-result{background:#222;border-radius:4px;padding:12px 14px;font-size:13px;line-height:1.7;min-height:52px;color:#ccc}
+.wi-result .good{color:#00DD88;font-weight:900}
+.wi-result .bad{color:#FF4466;font-weight:900}
+.wi-result .amt{color:#FFE500;font-weight:900}
+.wi-risk-banner{display:none;background:#E8157A;color:#fff;border-radius:4px;padding:11px 14px;margin-bottom:10px;font-size:12px;font-weight:700;line-height:1.5}
+.wi-risk-banner.show{display:block}
+.wi-safe-banner{display:none;background:#00CC66;color:#fff;border-radius:4px;padding:11px 14px;margin-bottom:10px;font-size:12px;font-weight:700;line-height:1.5}
+.wi-safe-banner.show{display:block}
 </style>
 </head>
 <body>
@@ -132,39 +172,36 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 
 <div class="cycle-strip" id="cycle-strip"></div>
 
-<!-- HERO: Real Balance -->
-<div class="hero-card">
-  <div class="hero-label">REAL BALANCE</div>
-  <div class="real-num pos" id="real-num">—</div>
-  <div class="hero-sub">
-    <span>BANK <b id="display-bank">—</b></span>
-    <span>BILLS DUE <b id="display-bills">—</b></span>
-  </div>
-  <div class="alert-bar" id="alert-bar">—</div>
-  <div class="two-chips">
-    <div class="chip cyan">
-      <div class="cl">SAFE TODAY</div>
-      <div class="cv" id="chip-safe">—</div>
-      <div class="cs" id="chip-safe-note">per day, fixed bills aside</div>
-    </div>
-    <div class="chip pink">
-      <div class="cl">NEXT PAY</div>
-      <div class="cv" id="chip-nextpay">—</div>
-      <div class="cs" id="chip-days">—</div>
-    </div>
-  </div>
-  <div class="bank-row">
+<!-- RISK / SAFE BANNER -->
+<div class="wi-risk-banner" id="wi-risk-banner"></div>
+<div class="wi-safe-banner" id="wi-safe-banner"></div>
+
+<!-- PIPELINE HERO -->
+<div class="hero-card" style="padding:0">
+  <div style="padding:12px 14px 0;font-size:10px;font-weight:700;letter-spacing:.15em;color:#888">WHERE YOUR MONEY GOES</div>
+  <div id="pipeline-wrap" style="padding:4px 14px 14px"></div>
+  <div class="bank-row" style="border-top:2px solid #111;padding:10px 14px">
     <span class="bank-label">UPDATE BANK BALANCE</span>
     <input class="bank-input" type="number" id="bank-input" placeholder="$0.00" />
   </div>
 </div>
 
-<!-- PROJECTION CHART -->
-<div class="graph-card">
-  <div class="graph-label">6-PERIOD PROJECTION</div>
-  <div class="graph-wrap">
-    <canvas id="proj-chart" role="img" aria-label="6-period projected closing balance">Loading chart.</canvas>
+<!-- WHAT IF FAB -->
+<button class="wi-fab" id="wi-fab" onclick="openWiSheet()">WHAT IF I BUY... ↑</button>
+
+<!-- WHAT IF SHEET -->
+<div class="wi-sheet" id="wi-sheet">
+  <div class="wi-sheet-header">
+    <span class="wi-sheet-title">WHAT IF I BUY SOMETHING?</span>
+    <button class="wi-sheet-close" onclick="closeWiSheet()">✕</button>
   </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input class="wi-input" id="wi-name" type="text" placeholder="item name (optional)" style="flex:1.2;font-size:13px">
+    <input class="wi-input" id="wi-amt" type="number" placeholder="$0" inputmode="decimal" style="flex:.8">
+  </div>
+  <div style="font-size:9px;font-weight:700;letter-spacing:.12em;color:#666;margin-bottom:8px">WHEN DO I BUY IT?</div>
+  <div class="wi-cycles" id="wi-cycles"></div>
+  <div class="wi-result" id="wi-result">Type an amount to see what happens.</div>
 </div>
 
 <!-- TABS -->
@@ -464,26 +501,194 @@ function buildStrip(){
   });
 }
 
-/* ── HERO ── */
+/* ── PIPELINE HERO ── */
+let wiAmt=0, wiCycleIdx=1, wiName='';
+
 function buildHero(){
-  const r=real(), sf=safePerDay(), d=daysUntilPay();
-  const ub=unpaidBills(S.selected);
-  const pb=projectedBank(S.selected);
-  document.getElementById('real-num').textContent=$n(r);
-  document.getElementById('real-num').className='real-num '+amtCls(r);
-  document.getElementById('display-bank').textContent=S.selected===0?$n(S.bank):$n(pb)+' proj.';
-  document.getElementById('display-bills').textContent=$n(ub);
   document.getElementById('bank-input').value=S.bank;
-
-  const alert=document.getElementById('alert-bar');
-  if(r<0){ alert.textContent=$n(Math.abs(r))+' SHORT — BILLS EXCEED BALANCE'; alert.className='alert-bar show'; }
-  else if(r<200){ alert.textContent='LOW BUFFER — ONLY '+$n(r)+' AFTER BILLS'; alert.className='alert-bar show'; }
-  else{ alert.className='alert-bar'; }
-
-  document.getElementById('chip-safe').textContent=$n(sf);
-  document.getElementById('chip-nextpay').textContent=periods[S.selected].nextPay;
-  document.getElementById('chip-days').textContent=d+' day'+(d===1?'':'s')+' away';
+  buildPipeline(wiAmt, wiCycleIdx);
+  buildWiCycleButtons();
 }
+
+function buildPipeline(extraAmt, extraCycleIdx){
+  const sel = S.selected;
+  const isCurrent = sel === 0;
+
+  // base numbers
+  const bankNow   = S.bank;
+  const billsLeft = unpaidBills(sel);
+  const totalB    = totalBills(sel);
+  const freeNow   = isCurrent ? bankNow - billsLeft : PAY - totalB;
+  const nextLabel = periods[sel] ? periods[sel].nextPay : '—';
+  const daysAway  = daysUntilPay();
+
+  // next cycle closing (fresh start)
+  const nextIdx   = sel + 1 < periods.length ? sel + 1 : null;
+  const nextBills = nextIdx !== null ? totalBills(nextIdx) : 0;
+  const nextLabel2= nextIdx !== null ? periods[nextIdx].label : null;
+  let   closing   = nextIdx !== null ? PAY - nextBills : null;
+
+  // what-if adjustment
+  let wiAdj = 0;
+  if(extraAmt > 0){
+    if(extraCycleIdx === sel) wiAdj = -extraAmt;          // buying in current cycle
+    else if(nextIdx !== null && extraCycleIdx === nextIdx) closing = (closing||0) - extraAmt; // buying in next
+  }
+  const freeAdj = freeNow + wiAdj;
+
+  const wrap = document.getElementById('pipeline-wrap');
+  const $n2 = n => '$'+Math.abs(Math.round(n)).toLocaleString();
+  const neg = n => n < 0;
+
+  let html = '';
+  const row = (iconCls, iconTxt, lbl, valHtml, sub) =>
+    `<div class="pipe-step">
+      <div class="pipe-icon ${iconCls}">${iconTxt}</div>
+      <div style="flex:1;min-width:0">
+        <div class="pipe-lbl">${lbl}</div>
+        ${valHtml}
+        ${sub ? `<div class="pipe-sub">${sub}</div>` : ''}
+      </div>
+    </div><div class="pipe-conn"></div>`;
+
+  const val = (n, big, cls) =>
+    `<div class="pipe-val ${big?'big':''} ${cls||''}">${$n2(n)}</div>`;
+
+  if(isCurrent){
+    html += row('pi-bank','$','BANK NOW', val(bankNow,false,''), '');
+    html += row('pi-minus','−','BILLS REMAINING THIS CYCLE', val(billsLeft,false,'neg'), periods[sel].bills.filter((_,j)=>!S.paidMap[sel][j]).map(b=>b.name).join(' · ')||'all paid');
+  } else {
+    html += row('pi-pay','+','PAY · '+periods[sel].label, `<div class="pipe-val pos">+${$n2(PAY)}</div>`, '');
+    html += row('pi-minus','−','BILLS THIS CYCLE', val(totalB,false,'neg'), periods[sel].bills.map(b=>b.name).join(' · '));
+  }
+
+  // what-if row in current cycle
+  if(extraAmt > 0 && extraCycleIdx === sel){
+    html += row('pi-what','?',
+      'WHAT IF · '+(wiName||$n2(extraAmt)),
+      `<div class="pipe-val neg">−${$n2(extraAmt)}</div>`, wiName ? $n2(extraAmt) : '');
+  }
+
+  // free row
+  const freeColor = freeAdj < 0 ? 'neg' : '';
+  html += row('pi-free','✓', isCurrent ? 'FREE TO SPEND NOW' : 'CLOSING THIS CYCLE',
+    `<div class="pipe-val big ${freeColor}">${neg(freeAdj)?'−':''}${$n2(freeAdj)}</div>`,
+    isCurrent ? '$'+Math.round(Math.max(freeAdj,0)/Math.max(daysAway,1))+'/day until '+nextLabel : '');
+
+  // next cycle preview
+  if(nextIdx !== null){
+    html += row('pi-pay','+','PAYDAY · '+periods[nextIdx].label,
+      `<div class="pipe-val pos">+${$n2(PAY)}</div>`, '');
+    html += row('pi-minus','−','BILLS · '+periods[nextIdx].label,
+      `<div class="pipe-val neg">−${$n2(nextBills)}</div>`,
+      periods[nextIdx].bills.slice(0,3).map(b=>b.name).join(' · ')+(periods[nextIdx].bills.length>3?' · more':''));
+    // what-if row in next cycle
+    if(extraAmt > 0 && extraCycleIdx === nextIdx){
+      html += row('pi-what','?',
+        'WHAT IF · '+(wiName||$n2(extraAmt)),
+        `<div class="pipe-val neg">−${$n2(extraAmt)}</div>`, wiName||'');
+    }
+    const closeColor = closing < 0 ? 'neg' : '';
+    html += `<div class="pipe-step">
+      <div class="pipe-icon pi-close">→</div>
+      <div style="flex:1">
+        <div class="pipe-lbl">CLOSING AFTER ${periods[nextIdx].label}</div>
+        <div class="pipe-val big ${closeColor}">${neg(closing)?'−':''}${$n2(closing)}</div>
+        <div class="pipe-sub">${closing < 0 ? '⚠️ Goes negative!' : extraAmt > 0 ? 'After purchase' : 'Fresh start basis'}</div>
+      </div>
+    </div>`;
+  }
+
+  wrap.innerHTML = html;
+
+  // banners
+  updateWiBanners(freeAdj, closing, extraAmt);
+}
+
+function updateWiBanners(freeAdj, closing, extraAmt){
+  const risk = document.getElementById('wi-risk-banner');
+  const safe = document.getElementById('wi-safe-banner');
+  if(extraAmt <= 0){ risk.classList.remove('show'); safe.classList.remove('show'); return; }
+  const label = wiName || '$'+Math.round(extraAmt).toLocaleString()+' purchase';
+  if(freeAdj < 0){
+    risk.innerHTML = `⚠️ Buying ${label} now leaves you short before next pay.`;
+    risk.classList.add('show'); safe.classList.remove('show');
+  } else if(closing !== null && closing < 0){
+    risk.innerHTML = `⚠️ After ${label} + bills, next cycle goes negative.`;
+    risk.classList.add('show'); safe.classList.remove('show');
+  } else {
+    safe.innerHTML = `✓ ${label} is affordable${closing !== null ? ' — next cycle closes at $'+Math.round(closing).toLocaleString() : ''}.`;
+    safe.classList.add('show'); risk.classList.remove('show');
+  }
+}
+
+function buildWiCycleButtons(){
+  const wrap = document.getElementById('wi-cycles');
+  if(!wrap) return;
+  wrap.innerHTML = periods.map((p,i) =>
+    `<button class="wi-cycle-btn${wiCycleIdx===i?' active':''}" onclick="setWiCycle(${i})">${p.label}</button>`
+  ).join('');
+}
+
+function setWiCycle(i){
+  wiCycleIdx = i;
+  buildWiCycleButtons();
+  calcWiResult();
+  buildPipeline(wiAmt, wiCycleIdx);
+}
+
+function calcWiResult(){
+  const el = document.getElementById('wi-result');
+  if(!el) return;
+  if(wiAmt <= 0){ el.textContent='Type an amount to see what happens.'; return; }
+  const label = wiName || '$'+Math.round(wiAmt).toLocaleString()+' purchase';
+  const cycleLabel = periods[wiCycleIdx] ? periods[wiCycleIdx].label : '?';
+  const isCurrent = wiCycleIdx === S.selected;
+  const freeNow = S.selected===0 ? S.bank - unpaidBills(0) : PAY - totalBills(S.selected);
+  const freeAfter = isCurrent ? freeNow - wiAmt : freeNow;
+  const nextIdx = wiCycleIdx + 1 < periods.length ? wiCycleIdx + 1 : null;
+  const closingBase = PAY - (nextIdx!==null ? totalBills(wiCycleIdx) : 0);
+  const closingAfter = closingBase - (isCurrent ? 0 : wiAmt);
+
+  let html = '';
+  if(isCurrent && freeAfter < 0){
+    html = `Buying <b class="amt">${label}</b> NOW leaves you <b class="bad">$${Math.abs(Math.round(freeAfter)).toLocaleString()} short</b> before ${cycleLabel} pay.`;
+  } else if(!isCurrent && closingAfter < 0){
+    html = `Buying <b class="amt">${label}</b> on ${cycleLabel} pay means that cycle goes <b class="bad">$${Math.abs(Math.round(closingAfter)).toLocaleString()} negative</b>.`;
+  } else if(isCurrent){
+    html = `Buying <b class="amt">${label}</b> now is fine — you'd have <b class="good">$${Math.round(freeAfter).toLocaleString()}</b> left to spend this cycle.`;
+  } else {
+    html = `Waiting until <b class="amt">${cycleLabel}</b> pay leaves your current cycle untouched. That cycle closes at <b class="good">$${Math.round(closingAfter).toLocaleString()}</b>.`;
+  }
+  el.innerHTML = html;
+}
+
+function openWiSheet(){
+  document.getElementById('wi-sheet').classList.add('open');
+  document.getElementById('wi-fab').classList.add('hidden');
+  buildWiCycleButtons();
+  setTimeout(()=>document.getElementById('wi-amt').focus(),300);
+}
+function closeWiSheet(){
+  document.getElementById('wi-sheet').classList.remove('open');
+  document.getElementById('wi-fab').classList.remove('hidden');
+}
+
+// wire up inputs
+setTimeout(()=>{
+  const amtEl = document.getElementById('wi-amt');
+  const nameEl = document.getElementById('wi-name');
+  if(amtEl) amtEl.addEventListener('input',()=>{
+    wiAmt = parseFloat(amtEl.value)||0;
+    calcWiResult();
+    buildPipeline(wiAmt, wiCycleIdx);
+  });
+  if(nameEl) nameEl.addEventListener('input',()=>{
+    wiName = nameEl.value.trim();
+    calcWiResult();
+    buildPipeline(wiAmt, wiCycleIdx);
+  });
+},500);
 
 /* ── CHART ── */
 let chart=null;
