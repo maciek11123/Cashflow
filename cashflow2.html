@@ -592,29 +592,7 @@ function buildPipeline(extraAmt, extraCycleIdx){
     `<div class="pipe-val big ${freeColor}">${neg(freeAdj)?'−':''}${$n2(freeAdj)}</div>`,
     isCurrent ? '$'+Math.round(Math.max(freeAdj,0)/Math.max(daysAway,1))+'/day until '+nextLabel : '');
 
-  // next cycle preview
-  if(nextIdx !== null){
-    html += row('pi-pay','+','PAYDAY · '+periods[nextIdx].label,
-      `<div class="pipe-val pos">+${$n2(PAY)}</div>`, '');
-    html += row('pi-minus','−','BILLS · '+periods[nextIdx].label,
-      `<div class="pipe-val neg">−${$n2(nextBills)}</div>`,
-      periods[nextIdx].bills.slice(0,3).map(b=>b.name).join(' · ')+(periods[nextIdx].bills.length>3?' · more':''));
-    // what-if row in next cycle
-    if(extraAmt > 0 && extraCycleIdx === nextIdx){
-      html += row('pi-what','?',
-        'WHAT IF · '+(wiName||$n2(extraAmt)),
-        `<div class="pipe-val neg">−${$n2(extraAmt)}</div>`, wiName||'');
-    }
-    const closeColor = closing < 0 ? 'neg' : '';
-    html += `<div class="pipe-step">
-      <div class="pipe-icon pi-close">→</div>
-      <div style="flex:1">
-        <div class="pipe-lbl">CLOSING AFTER ${periods[nextIdx].label}</div>
-        <div class="pipe-val big ${closeColor}">${neg(closing)?'−':''}${$n2(closing)}</div>
-        <div class="pipe-sub">${closing < 0 ? '⚠️ Goes negative!' : extraAmt > 0 ? 'After purchase' : 'Fresh start basis'}</div>
-      </div>
-    </div>`;
-  }
+  // next cycle preview removed
 
   wrap.innerHTML = html;
 
