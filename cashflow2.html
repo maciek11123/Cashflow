@@ -438,7 +438,22 @@ let S = {
   paidMap: periods.map(p => p.bills.map(() => false)),
   savedProjections: []
 };
-function loadState(){ try{ const s=localStorage.getItem('cf-v1'); if(s){ const p=JSON.parse(s); S.bank=p.bank||1790; S.paidMap=p.paidMap||S.paidMap; S.savedProjections=p.savedProjections||[]; S.selected=p.selected||0; } }catch(e){} }
+function loadState(){
+  try{
+    const s=localStorage.getItem('cf-v1');
+    if(s){
+      const p=JSON.parse(s);
+      S.bank = (p.bank && p.bank > 0) ? p.bank : 1790;
+      // Rebuild paidMap to match current periods length
+      S.paidMap = periods.map((per,i) => {
+        const saved = p.paidMap && p.paidMap[i];
+        return per.bills.map((_,j) => saved ? (saved[j]||false) : false);
+      });
+      S.savedProjections = p.savedProjections||[];
+      S.selected = (p.selected && p.selected < periods.length) ? p.selected : 0;
+    }
+  }catch(e){ console.warn('loadState error',e); }
+}
 function saveState(){ localStorage.setItem('cf-v1', JSON.stringify({bank:S.bank,paidMap:S.paidMap,savedProjections:S.savedProjections,selected:S.selected})); }
 loadState();
 
@@ -537,6 +552,8 @@ function buildPipeline(extraAmt, extraCycleIdx){
   const freeAdj = freeNow + wiAdj;
 
   const wrap = document.getElementById('pipeline-wrap');
+  if(!wrap){ console.error('pipeline-wrap not found'); return; }
+  if(!periods || !periods[sel]){ wrap.innerHTML='<div style="padding:20px;color:#888">Loading...</div>'; return; }
   const $n2 = n => '$'+Math.abs(Math.round(n)).toLocaleString();
   const neg = n => n < 0;
 
