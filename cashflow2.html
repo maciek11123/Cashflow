@@ -138,7 +138,10 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 .pipe-bill-list{display:flex;flex-direction:column;gap:0;border-top:1px solid #f0f0f0;margin-top:2px}
 .pipe-bill-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f4f4f4;font-size:12px}
 .pipe-bill-row:last-child{border-bottom:none}
-.pipe-bill-name{color:#333;font-weight:700}
+.pipe-bill-name{color:#333;font-weight:700;flex:1}
+.pipe-bill-input{width:72px;border:none;border-bottom:2px solid #ddd;background:transparent;font-family:'Space Mono',monospace;font-size:13px;font-weight:900;color:#E8157A;text-align:right;padding:2px 0;outline:none}
+.pipe-bill-input:focus{border-bottom-color:#111}
+.pipe-bill-input.flex-c{color:#BA7517}
 .pipe-bill-amt{color:#E8157A;font-weight:900;font-size:13px}
 
 /* ── WHAT IF ── */
@@ -297,19 +300,12 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
         ✦ GEMINI<br><span style="font-size:9px;font-weight:400;opacity:.7">cloud · fast</span>
       </button>
       <button id="btn-webllm" onclick="setEngine('webllm')" style="border:2.5px solid #111;background:#fff;color:#111;font-family:Space Mono,monospace;font-size:12px;font-weight:700;padding:10px;cursor:pointer">
-        ◈ ON-DEVICE<br><span style="font-size:9px;font-weight:400;opacity:.6">offline · private</span>
+        ◈ GEMINI NANO<br><span style="font-size:9px;font-weight:400;opacity:.6">on-device · Android</span>
       </button>
     </div>
     <div id="engine-status" style="font-size:11px;color:#888;min-height:16px"></div>
     <div id="webllm-load-wrap" style="display:none;margin-top:8px">
-      <button class="ask-btn" style="width:100%" onclick="loadWebLLM()">DOWNLOAD MODEL (~1.4GB) ↗</button>
-      <div style="font-size:10px;color:#888;margin-top:4px">One-time. Cached forever. Fully offline after.</div>
-      <div id="webllm-progress" style="margin-top:8px;display:none">
-        <div style="background:#f0f0f0;border:2px solid #111;height:8px;margin-bottom:4px">
-          <div id="webllm-bar" style="height:100%;background:#111;width:0%;transition:width .3s"></div>
-        </div>
-        <div id="webllm-pct" style="font-size:11px;font-weight:700">0%</div>
-      </div>
+      <div id="webllm-status" style="font-size:11px;color:#888">Checking for Gemini Nano...</div>
     </div>
   </div>
 
@@ -352,10 +348,7 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script type="module">
-  import * as webllm from "https://esm.run/@mlc-ai/web-llm";
-  window.WebLLM = webllm;
-</script>
+
 <script>
 const GEMINI_KEY = 'AIzaSyAnAaV0OBrMSKX8Ie_Kl-IpIQh-6Th45nI';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
@@ -591,9 +584,15 @@ function buildPipeline(extraAmt, extraCycleIdx){
     html += row('pi-bank','$','BANK NOW', val(bankNow,false,''), '');
     // expanded bills list
     const unpaidBillsList = periods[sel].bills.filter((_,j)=>!S.paidMap[sel][j]);
-    const billRows = unpaidBillsList.map(b=>
-      `<div class="pipe-bill-row"><span class="pipe-bill-name">${b.name}</span><span class="pipe-bill-amt">${$n2(b.amt)}</span></div>`
-    ).join('');
+    const billRows = unpaidBillsList.map((b,jj)=>{
+      const j = periods[sel].bills.indexOf(b);
+      return `<div class="pipe-bill-row">
+        <span class="pipe-bill-name">${b.name}</span>
+        <input class="pipe-bill-input${b.type==='flex'?' flex-c':''}" type="number" value="${b.amt}" min="0" step="1"
+          onchange="updateAmt(${sel},${j},this.value);buildPipeline(wiAmt,wiCycleIdx)"
+          onclick="this.select()" />
+      </div>`;
+    }).join('');
     html += `<div class="pipe-step">
       <div class="pipe-icon pi-minus">−</div>
       <div style="flex:1;min-width:0">
@@ -605,8 +604,13 @@ function buildPipeline(extraAmt, extraCycleIdx){
   } else {
     html += row('pi-pay','+','PAY · '+periods[sel].label, `<div class="pipe-val pos">+${$n2(PAY)}</div>`, '');
     // expanded bills list
-    const billRows2 = periods[sel].bills.map(b=>
-      `<div class="pipe-bill-row"><span class="pipe-bill-name">${b.name}</span><span class="pipe-bill-amt">${$n2(b.amt)}</span></div>`
+    const billRows2 = periods[sel].bills.map((b,j)=>
+      `<div class="pipe-bill-row">
+        <span class="pipe-bill-name">${b.name}</span>
+        <input class="pipe-bill-input${b.type==='flex'?' flex-c':''}" type="number" value="${b.amt}" min="0" step="1"
+          onchange="updateAmt(${sel},${j},this.value);buildPipeline(wiAmt,wiCycleIdx)"
+          onclick="this.select()" />
+      </div>`
     ).join('');
     html += `<div class="pipe-step">
       <div class="pipe-icon pi-minus">−</div>
@@ -1018,68 +1022,34 @@ function simUpdate(){
 /* ── AI ENGINE ── */
 let lastAiAnswer="", lastAiQuestion="";
 let currentEngine = 'gemini'; // 'gemini' | 'webllm'
-let webllmEngine = null;
-let webllmReady = false;
+// webllm removed
 
 function setEngine(e){
-  currentEngine = e;
-  const bg = '#111', fg = '#FFD600', bg2 = '#fff', fg2 = '#111';
+  currentEngine=e;
+  const bg='#111',fg='#FFE500',bg2='#fff',fg2='#111';
   document.getElementById('btn-gemini').style.background = e==='gemini'?bg:bg2;
   document.getElementById('btn-gemini').style.color = e==='gemini'?fg:fg2;
   document.getElementById('btn-webllm').style.background = e==='webllm'?bg:bg2;
   document.getElementById('btn-webllm').style.color = e==='webllm'?fg:fg2;
   const statusEl = document.getElementById('engine-status');
   const loadWrap = document.getElementById('webllm-load-wrap');
-  if(e==='gemini'){
-    statusEl.textContent = '✦ Gemini Flash — cloud, needs internet';
-    loadWrap.style.display='none';
-  } else {
-    if(webllmReady){
-      statusEl.textContent = '◈ On-device model ready — fully offline';
-      loadWrap.style.display='none';
+  const wiStatus = document.getElementById('webllm-status');
+  if(e==='webllm'){
+    loadWrap.style.display='';
+    if(typeof window.ai !== 'undefined' && window.ai.languageModel){
+      if(wiStatus) wiStatus.textContent = '◈ Gemini Nano available ✓';
+      statusEl.textContent = '';
     } else {
-      statusEl.textContent = '◈ Model not downloaded yet';
-      loadWrap.style.display='block';
+      if(wiStatus) wiStatus.textContent = '◈ Not detected — needs Chrome on Android with AI features enabled';
+      statusEl.textContent = '';
     }
+  } else {
+    loadWrap.style.display='none';
+    statusEl.textContent = '✦ Gemini Flash — cloud, needs internet';
   }
 }
 
-async function loadWebLLM(){
-  const statusEl = document.getElementById('engine-status');
-  const progressWrap = document.getElementById('webllm-progress');
-  const bar = document.getElementById('webllm-bar');
-  const pct = document.getElementById('webllm-pct');
-  const loadBtn = document.getElementById('webllm-load-wrap').querySelector('button');
-
-  if(!window.WebLLM){ 
-    statusEl.textContent = 'WebLLM not loaded yet, try again in a moment.';
-    return; 
-  }
-
-  loadBtn.disabled = true;
-  loadBtn.textContent = 'DOWNLOADING...';
-  progressWrap.style.display='block';
-  statusEl.textContent = 'Starting download...';
-
-  try{
-    webllmEngine = await window.WebLLM.CreateMLCEngine('gemma-2-2b-it-q4f32_1-MLC', {
-      initProgressCallback: (p) => {
-        const prog = Math.round((p.progress||0)*100);
-        bar.style.width = prog+'%';
-        pct.textContent = prog+'% — '+( p.text||'loading...' );
-        statusEl.textContent = 'Downloading: '+prog+'%';
-      }
-    });
-    webllmReady = true;
-    statusEl.textContent = '◈ On-device model ready — fully offline';
-    progressWrap.style.display='none';
-    document.getElementById('webllm-load-wrap').style.display='none';
-  } catch(err){
-    statusEl.textContent = 'Download failed: '+err.message;
-    loadBtn.disabled=false;
-    loadBtn.textContent='RETRY DOWNLOAD ↗';
-  }
-}
+// loadWebLLM removed
 
 async function queryAI(prompt){
   if(currentEngine==='gemini'){
@@ -1094,13 +1064,16 @@ async function queryAI(prompt){
     const data = await res.json();
     return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from Gemini.';
   } else {
-    if(!webllmReady || !webllmEngine) throw new Error('On-device model not loaded. Download it first.');
-    const reply = await webllmEngine.chat.completions.create({
-      messages:[{role:'user',content:prompt}],
-      max_tokens:500,
-      temperature:0.7
+    // Chrome on-device Gemini Nano via window.ai
+    if(typeof window.ai === 'undefined' || !window.ai.languageModel){
+      throw new Error('Gemini Nano not available. Use Chrome on Android with on-device AI enabled.');
+    }
+    const session = await window.ai.languageModel.create({
+      systemPrompt: 'You are a concise cashflow advisor. Keep responses under 150 words.'
     });
-    return reply.choices[0]?.message?.content || 'No response.';
+    const result = await session.prompt(prompt);
+    session.destroy();
+    return result || 'No response.';
   }
 }
 
