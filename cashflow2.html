@@ -135,6 +135,11 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 .pipe-val.big{font-size:26px}
 .pipe-sub{font-size:10px;color:#aaa;margin-top:2px}
 .pipe-conn{width:2px;height:10px;background:#e0e0e0;margin-left:15px}
+.pipe-bill-list{display:flex;flex-direction:column;gap:0;border-top:1px solid #f0f0f0;margin-top:2px}
+.pipe-bill-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f4f4f4;font-size:12px}
+.pipe-bill-row:last-child{border-bottom:none}
+.pipe-bill-name{color:#333;font-weight:700}
+.pipe-bill-amt{color:#E8157A;font-weight:900;font-size:13px}
 
 /* ── WHAT IF ── */
 .wi-fab{position:fixed;bottom:72px;right:16px;background:#FF8C00;color:#fff;border:none;border-radius:999px;padding:12px 18px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:90}
@@ -573,10 +578,33 @@ function buildPipeline(extraAmt, extraCycleIdx){
 
   if(isCurrent){
     html += row('pi-bank','$','BANK NOW', val(bankNow,false,''), '');
-    html += row('pi-minus','−','BILLS REMAINING THIS CYCLE', val(billsLeft,false,'neg'), periods[sel].bills.filter((_,j)=>!S.paidMap[sel][j]).map(b=>b.name).join(' · ')||'all paid');
+    // expanded bills list
+    const unpaidBillsList = periods[sel].bills.filter((_,j)=>!S.paidMap[sel][j]);
+    const billRows = unpaidBillsList.map(b=>
+      `<div class="pipe-bill-row"><span class="pipe-bill-name">${b.name}</span><span class="pipe-bill-amt">${$n2(b.amt)}</span></div>`
+    ).join('');
+    html += `<div class="pipe-step">
+      <div class="pipe-icon pi-minus">−</div>
+      <div style="flex:1;min-width:0">
+        <div class="pipe-lbl">BILLS REMAINING · ${unpaidBillsList.length} LEFT</div>
+        <div class="pipe-val neg" style="margin-bottom:8px">${$n2(billsLeft)}</div>
+        <div class="pipe-bill-list">${billRows||'<span style="color:#aaa;font-size:11px">All paid ✓</span>'}</div>
+      </div>
+    </div><div class="pipe-conn"></div>`;
   } else {
     html += row('pi-pay','+','PAY · '+periods[sel].label, `<div class="pipe-val pos">+${$n2(PAY)}</div>`, '');
-    html += row('pi-minus','−','BILLS THIS CYCLE', val(totalB,false,'neg'), periods[sel].bills.map(b=>b.name).join(' · '));
+    // expanded bills list
+    const billRows2 = periods[sel].bills.map(b=>
+      `<div class="pipe-bill-row"><span class="pipe-bill-name">${b.name}</span><span class="pipe-bill-amt">${$n2(b.amt)}</span></div>`
+    ).join('');
+    html += `<div class="pipe-step">
+      <div class="pipe-icon pi-minus">−</div>
+      <div style="flex:1;min-width:0">
+        <div class="pipe-lbl">BILLS THIS CYCLE · ${periods[sel].bills.length} TOTAL</div>
+        <div class="pipe-val neg" style="margin-bottom:8px">${$n2(totalB)}</div>
+        <div class="pipe-bill-list">${billRows2}</div>
+      </div>
+    </div><div class="pipe-conn"></div>`;
   }
 
   // what-if row in current cycle
