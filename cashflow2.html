@@ -448,7 +448,12 @@ function loadState(){
     const s=localStorage.getItem('cf-v2');
     if(s){
       const p=JSON.parse(s);
-      S.bank = (p.bank && p.bank > 0) ? p.bank : 1790;
+      // If bank was saved as 0 or missing, wipe and use default
+      if(!p.bank || p.bank <= 0){
+        localStorage.removeItem('cf-v2');
+        return;
+      }
+      S.bank = p.bank;
       // Rebuild paidMap to match current periods length
       S.paidMap = periods.map((per,i) => {
         const saved = p.paidMap && p.paidMap[i];
@@ -457,7 +462,7 @@ function loadState(){
       S.savedProjections = p.savedProjections||[];
       S.selected = (p.selected && p.selected < periods.length) ? p.selected : 0;
     }
-  }catch(e){ console.warn('loadState error',e); }
+  }catch(e){ console.warn('loadState error',e); localStorage.removeItem('cf-v2'); }
 }
 function saveState(){ localStorage.setItem('cf-v2', JSON.stringify({bank:S.bank,paidMap:S.paidMap,savedProjections:S.savedProjections,selected:S.selected})); }
 loadState();
