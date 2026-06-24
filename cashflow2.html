@@ -526,7 +526,7 @@ function buildHero(){
   const bankRow = document.getElementById('bank-row');
   if(S.selected === 0){
     bankRow.style.display = '';
-    document.getElementById('bank-input').value = S.bank;
+    document.getElementById('bank-input').value = S.bank > 0 ? S.bank : '';
   } else {
     bankRow.style.display = 'none';
   }
@@ -870,7 +870,7 @@ window.switchTab=function(t){
 /* ── BANK INPUT ── */
 document.getElementById('bank-input').addEventListener('change',function(){
   const v=parseFloat(this.value);
-  if(!isNaN(v)){ S.bank=v; saveState(); refresh(); }
+  if(!isNaN(v) && v > 0){ S.bank=v; saveState(); refresh(); }
 });
 
 /* ── GEMINI ── */
