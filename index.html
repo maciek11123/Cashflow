@@ -117,7 +117,7 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 
 <!-- HERO: Real Balance -->
 <div class="hero-card">
-  <div class="hero-label">REAL BALANCE</div>
+  <div class="hero-label">REAL BALANCE <span id="cycle-badge" style="float:right;background:#FFD600;color:#111;padding:1px 7px;font-size:10px;letter-spacing:.1em;font-weight:700">—</span></div>
   <div class="real-num pos" id="real-num">—</div>
   <div class="hero-sub">
     <span>BANK <b id="display-bank">—</b></span>
@@ -219,7 +219,8 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
   <button class="ntab active" onclick="switchTab('today')">TODAY</button>
   <button class="ntab" onclick="switchTab('bills')">BILLS</button>
   <button class="ntab" onclick="switchTab('sim')">SIM</button>
-  <button class="ntab" onclick="advanceCycle()">NEXT →</button>
+  <button class="ntab" onclick="shiftCycle(-1)">← PREV</button>
+  <button class="ntab" onclick="shiftCycle(1)">NEXT →</button>
 </div>
 </div>
 
@@ -365,7 +366,7 @@ function buildStrip(){
   periods.forEach((p,i)=>{
     const d=document.createElement('div');
     let cls='cpill'+(p.rent?' rent':p.vac?' vac':'')+(i===S.selected?' active':'');
-    d.className=cls; d.textContent=p.label;
+    d.className=cls; d.textContent=(i+1)+' · '+p.label;
     d.onclick=()=>{ S.selected=i; saveState(); refresh(); };
     el.appendChild(d);
   });
@@ -376,6 +377,7 @@ function buildHero(){
   const r=real(), sf=safePerDay(), d=daysUntilPay();
   const ub=unpaidBills(S.selected);
   const pb=projectedBank(S.selected);
+  document.getElementById('cycle-badge').textContent = 'CYCLE '+(S.selected+1)+'/'+periods.length;
   document.getElementById('real-num').textContent=$n(r);
   document.getElementById('real-num').className='real-num '+amtCls(r);
   document.getElementById('display-bank').textContent=S.selected===0?$n(S.bank):$n(pb)+' proj.';
@@ -536,33 +538,33 @@ document.getElementById('bank-input').addEventListener('change',function(){
   if(!isNaN(v)){ S.bank=v; saveState(); refresh(); }
 });
 
-/* ── ADVANCE CYCLE ── */
-window.advanceCycle = function(){
-  const last = periods.length - 1;
-  if(S.selected >= last){
-    alert('Already on the last cycle.');
-    return;
-  }
-  // Confirm
-  const cur = periods[S.selected];
-  const next = periods[S.selected + 1];
-  if(!confirm('Move to ' + next.label + '?\n\nThis will mark all bills in ' + cur.label + ' as paid and advance the cycle.')){
-    return;
-  }
-  // Mark all bills in current cycle as paid
-  S.paidMap[S.selected] = periods[S.selected].bills.map(() => true);
-  // Advance
-  S.selected = S.selected + 1;
+/* ── SHIFT CYCLE ── */
+window.shiftCycle = function(dir){
+  const next = S.selected + dir;
+  if(next < 0 || next >= periods.length) return;
+  S.selected = next;
   saveState();
   refresh();
   switchTab('today');
 };
+
+function updateCycleNav(){
+  const tabs = document.querySelectorAll('.ntab');
+  // tabs[3] = ← PREV, tabs[4] = NEXT →
+  const prevBtn = tabs[3], nextBtn = tabs[4];
+  if(!prevBtn || !nextBtn) return;
+  prevBtn.style.opacity = S.selected === 0 ? '0.3' : '1';
+  prevBtn.style.pointerEvents = S.selected === 0 ? 'none' : 'auto';
+  nextBtn.style.opacity = S.selected === periods.length - 1 ? '0.3' : '1';
+  nextBtn.style.pointerEvents = S.selected === periods.length - 1 ? 'none' : 'auto';
+}
 
 /* ── MAIN REFRESH ── */
 function refresh(){
   buildStrip();
   buildHero();
   buildBillsToday();
+  updateCycleNav();
 }
 
 // Dynamic date label
