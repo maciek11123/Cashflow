@@ -100,20 +100,6 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 .save-btn:hover{background:#111;color:#FFD600}
 .empty-state{font-size:12px;color:#888;padding:20px 0;text-align:center}
 
-/* AI advisor */
-.ai-section{margin-top:0}
-.ai-label{font-size:10px;letter-spacing:.13em;font-weight:700;margin-bottom:8px}
-.qchips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
-.qchip{border:2px solid #111;background:#fff;padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer}
-.qchip:hover{background:#111;color:#FFD600}
-.input-row{display:flex}
-.input-row input{flex:1;border:2.5px solid #111;border-right:none;padding:9px 10px;font-family:'Space Mono',monospace;font-size:12px;background:#fff;outline:none;min-width:0}
-.input-row input:focus{background:#FFFDE0}
-.ask-btn{border:2.5px solid #111;background:#111;color:#FFD600;padding:9px 14px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer}
-.ask-btn:hover{background:#333}
-.ai-bubble{background:#fff;border:2.5px solid #111;padding:12px;margin-top:6px;font-size:12px;line-height:1.65}
-.ai-bubble .al{font-size:9px;letter-spacing:.12em;font-weight:700;color:#E8157A;margin-bottom:5px}
-.thinking{color:#888;font-size:12px;padding:8px 0;font-style:italic}
 
 /* bottom nav */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#FFD600;border-top:3px solid #111;display:flex;max-width:420px;margin:0 auto}
@@ -124,10 +110,7 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 
 <div class="top-bar">
   <span class="brand">CASHFLOW</span>
-  <div style="display:flex;align-items:center;gap:8px">
-    <button id="install-btn" onclick="triggerInstall()" style="border:2px solid #111;background:#111;color:#FFD600;font-family:Space Mono,monospace;font-size:10px;font-weight:700;padding:4px 10px;cursor:pointer">+ INSTALL</button>
-    <span class="date-lbl" id="date-lbl"></span>
-  </div>
+  <span class="date-lbl" id="date-lbl"></span>
 </div>
 
 <div class="cycle-strip" id="cycle-strip"></div>
@@ -176,21 +159,6 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
   </div>
   <div id="bill-list-today"></div>
 
-  <div class="ai-section" style="margin-top:14px">
-    <div class="ai-label">WHAT IF I SPEND...</div>
-    <div class="qchips">
-      <span class="qchip" onclick="ask('What if I spend $200 on shoes today?')">$200 shoes</span>
-      <span class="qchip" onclick="ask('What if I skip Spotify and Claude Pro this cycle?')">skip streaming</span>
-      <span class="qchip" onclick="ask('What if rent goes up $100 this month?')">rent +$100</span>
-      <span class="qchip" onclick="ask('What if I spend an extra $300 on staycation?')">staycation splurge</span>
-      <span class="qchip" onclick="ask('Which bills can I safely skip if things get tight?')">what can I skip?</span>
-    </div>
-    <div class="input-row">
-      <input type="text" id="q-in" placeholder="What if I spend $X on..." />
-      <button class="ask-btn" onclick="submitQ()">ASK ↗</button>
-    </div>
-    <div id="ai-out"></div>
-  </div>
 </div>
 
 <!-- BILLS TAB -->
@@ -244,80 +212,19 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
   </div>
 </div>
 
-<!-- AI PROJECTION TAB -->
-<div class="pane" id="pane-aiproj">
 
-  <!-- ENGINE TOGGLE -->
-  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">AI ENGINE</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
-      <button id="btn-gemini" onclick="setEngine('gemini')" style="border:2.5px solid #111;background:#111;color:#FFD600;font-family:Space Mono,monospace;font-size:12px;font-weight:700;padding:10px;cursor:pointer">
-        ✦ GEMINI<br><span style="font-size:9px;font-weight:400;opacity:.7">cloud · fast</span>
-      </button>
-      <button id="btn-webllm" onclick="setEngine('webllm')" style="border:2.5px solid #111;background:#fff;color:#111;font-family:Space Mono,monospace;font-size:12px;font-weight:700;padding:10px;cursor:pointer">
-        ◈ ON-DEVICE<br><span style="font-size:9px;font-weight:400;opacity:.6">offline · private</span>
-      </button>
-    </div>
-    <div id="engine-status" style="font-size:11px;color:#888;min-height:16px"></div>
-    <div id="webllm-load-wrap" style="display:none;margin-top:8px">
-      <button class="ask-btn" style="width:100%" onclick="loadWebLLM()">DOWNLOAD MODEL (~1.4GB) ↗</button>
-      <div style="font-size:10px;color:#888;margin-top:4px">One-time. Cached forever. Fully offline after.</div>
-      <div id="webllm-progress" style="margin-top:8px;display:none">
-        <div style="background:#f0f0f0;border:2px solid #111;height:8px;margin-bottom:4px">
-          <div id="webllm-bar" style="height:100%;background:#111;width:0%;transition:width .3s"></div>
-        </div>
-        <div id="webllm-pct" style="font-size:11px;font-weight:700">0%</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ANALYSE BUTTON -->
-  <div style="background:#fff;border:2.5px solid #111;padding:14px;margin-bottom:8px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">FULL CASHFLOW ANALYSIS</div>
-    <button class="ask-btn" style="width:100%;text-align:center" onclick="runAiProjection()">ANALYSE MY CASHFLOW ↗</button>
-  </div>
-  <div id="aiproj-out"></div>
-
-  <!-- SPECIFIC QUESTIONS -->
-  <div style="margin-top:8px;background:#fff;border:2.5px solid #111;padding:14px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">ASK SOMETHING SPECIFIC</div>
-    <div class="qchips" style="margin-bottom:8px">
-      <span class="qchip" onclick="runAiQ('What are my 3 biggest cashflow risks in the next 8 weeks?')">biggest risks</span>
-      <span class="qchip" onclick="runAiQ('If I want to save $300 by August, what do I need to cut?')">save $300</span>
-      <span class="qchip" onclick="runAiQ('Which cycle will be hardest and what should I do before it hits?')">hardest cycle</span>
-      <span class="qchip" onclick="runAiQ('Give me a strict week-by-week spending plan for the staycation.')">staycation plan</span>
-    </div>
-    <div class="input-row">
-      <input type="text" id="aiproj-q" placeholder="Ask your AI advisor..." />
-      <button class="ask-btn" onclick="runAiQ(document.getElementById('aiproj-q').value)">ASK ↗</button>
-    </div>
-  </div>
-</div>
-
-<!-- SAVED PROJECTIONS TAB -->
-<div class="pane" id="pane-projections">
-  <div class="section-hdr"><span>SAVED PROJECTIONS</span></div>
-  <div id="proj-list"></div>
-</div>
 
 <div class="nav-tabs">
   <button class="ntab active" onclick="switchTab('today')">TODAY</button>
   <button class="ntab" onclick="switchTab('bills')">BILLS</button>
   <button class="ntab" onclick="switchTab('sim')">SIM</button>
-  <button class="ntab" onclick="switchTab('aiproj')">AI ✦</button>
-  <button class="ntab" onclick="switchTab('projections')">SAVED</button>
+  <button class="ntab" onclick="advanceCycle()">NEXT →</button>
 </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script type="module">
-  import * as webllm from "https://esm.run/@mlc-ai/web-llm";
-  window.WebLLM = webllm;
-</script>
 <script>
-const GEMINI_KEY = 'AIzaSyDMG5ONcI4vW-Oxl3DD-eXOfqnWn4LZHAw';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
-
 const PAY = 1790;
 
 /* ── PERIODS ── */
@@ -617,10 +524,9 @@ window.switchTab=function(t){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
   document.getElementById('pane-'+t).classList.add('active');
-  const tabs=['today','bills','sim','aiproj','projections'];
+  const tabs=['today','bills','sim'];
   document.querySelectorAll('.ntab')[tabs.indexOf(t)].classList.add('active');
   if(t==='bills') buildBillsPaid();
-  if(t==='projections') buildProjections();
   if(t==='sim') buildSim();
 };
 
@@ -630,311 +536,27 @@ document.getElementById('bank-input').addEventListener('change',function(){
   if(!isNaN(v)){ S.bank=v; saveState(); refresh(); }
 });
 
-/* ── GEMINI ── */
-function buildContext(){
-  const nets=calcProjectionNets();
-  const snap=periods.map((p,i)=>`${p.label} (${p.shortCtx}): net $${nets[i]}`).join(', ');
-  const cur=periods[S.selected];
-  const r=real(), ub=unpaidBills(S.selected), sf=safePerDay();
-  return `You are a direct cashflow advisor for Maciek. His bank balance right now: $${S.bank}. Unpaid bills this cycle: $${ub}. Real balance (bank minus unpaid bills): $${Math.round(r)}. Safe to spend per day: $${Math.round(sf)}. Biweekly pay: $${PAY}. 6-period projection: ${snap}. Currently viewing: ${cur.label} (${cur.shortCtx}). Rent periods (Jul 3, Jul 31, Aug 28) are very tight — rent+daycare+Gemini = $1,282 out of $1,790. He has staycations Jun 19 and Aug 14 (his birthday). Skippable: Claude Pro $9, Spotify $12, clothing $200. Cannot skip: Gemini $27, non-alc beer $56, medication $30. Answer in 2-4 sentences max. Be specific: name the period, the new balance after the spend, one concrete suggestion. Casual and direct tone. No lists, no headers.`;
-}
-
-let lastQ='', lastA='';
-
-async function ask(q){
-  document.getElementById('q-in').value=q;
-  await submitQ();
-}
-
-async function submitQ(){
-  const q=document.getElementById('q-in').value.trim();
-  if(!q) return;
-  document.getElementById('q-in').value='';
-  lastQ=q;
-  const out=document.getElementById('ai-out');
-  out.innerHTML='<div class="thinking">thinking...</div>';
-
-  try{
-    const res=await fetch(GEMINI_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        contents:[
-          {role:'user',parts:[{text:buildContext()+'\n\nUSER: '+q}]}
-        ],
-        generationConfig:{maxOutputTokens:300,temperature:0.7}
-      })
-    });
-    const data=await res.json();
-    const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'No response from Gemini.';
-    lastA=text;
-
-    out.innerHTML=`
-      <div class="ai-bubble">
-        <div class="al">GEMINI</div>
-        ${text}
-        <br><button class="save-btn" onclick="saveProjection()">SAVE THIS PROJECTION ↓</button>
-      </div>`;
-  }catch(e){
-    out.innerHTML=`<div class="ai-bubble"><div class="al" style="color:#E8157A">ERROR</div>${e.message}<br><small style="color:#888">If running from file://, push to GitHub Pages to fix CORS.</small></div>`;
+/* ── ADVANCE CYCLE ── */
+window.advanceCycle = function(){
+  const last = periods.length - 1;
+  if(S.selected >= last){
+    alert('Already on the last cycle.');
+    return;
   }
-}
-
-window.saveProjection=function(){
-  if(!lastA) return;
-  const now=new Date().toLocaleDateString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  S.savedProjections.unshift({
-    question:lastQ,
-    answer:lastA,
-    label:lastQ.substring(0,40),
-    date:now,
-    cycle:periods[S.selected].label
-  });
+  // Confirm
+  const cur = periods[S.selected];
+  const next = periods[S.selected + 1];
+  if(!confirm('Move to ' + next.label + '?\n\nThis will mark all bills in ' + cur.label + ' as paid and advance the cycle.')){
+    return;
+  }
+  // Mark all bills in current cycle as paid
+  S.paidMap[S.selected] = periods[S.selected].bills.map(() => true);
+  // Advance
+  S.selected = S.selected + 1;
   saveState();
-  buildProjections();
-  switchTab('projections');
+  refresh();
+  switchTab('today');
 };
-
-document.getElementById('q-in').addEventListener('keydown',e=>{ if(e.key==='Enter') submitQ(); });
-
-/* ── SIMULATE ── */
-let simSkipped = {};
-let simChart = null;
-
-function buildSim(){
-  const p = periods[S.selected];
-  const flexBills = p.bills.filter(b=>b.type==='flex' && !b.name.includes('Groceries'));
-  const el = document.getElementById('sim-flex-toggles');
-  el.innerHTML = flexBills.map(b=>{
-    const key = b.name;
-    const skipped = simSkipped[key] || false;
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid #eee;font-size:13px">
-      <span style="color:${skipped?'#aaa':'#111'}">${b.name} <span style="color:#BA7517;font-size:11px">$${b.amt}</span></span>
-      <button onclick="simToggle('${key}')" style="border:2px solid #111;background:${skipped?'#111':'#fff'};color:${skipped?'#FFD600':'#111'};font-family:Space Mono,monospace;font-size:10px;font-weight:700;padding:3px 10px;cursor:pointer">${skipped?'SKIPPED':'SKIP'}</button>
-    </div>`;
-  }).join('');
-  simUpdate();
-}
-
-window.simToggle=function(key){
-  simSkipped[key] = !simSkipped[key];
-  buildSim();
-};
-
-window.simReset=function(){
-  simSkipped={};
-  document.getElementById('sim-amount').value=0;
-  document.getElementById('sim-label').value='';
-  document.getElementById('sim-groceries').value=200;
-  buildSim();
-};
-
-function simUpdate(){
-  const extra = parseInt(document.getElementById('sim-amount').value)||0;
-  const grocAmt = parseInt(document.getElementById('sim-groceries').value)||200;
-  document.getElementById('sim-amt-out').textContent='$'+extra;
-  document.getElementById('sim-groc-out').textContent='$'+grocAmt;
-
-  const p = periods[S.selected];
-  // calc simulated bills
-  let simBills = 0;
-  p.bills.forEach(b=>{
-    if(b.name.includes('Groceries')){ simBills += grocAmt; return; }
-    if(simSkipped[b.name]) return;
-    simBills += b.amt;
-  });
-  simBills += extra;
-
-  const fixedOnly = p.bills.filter(b=>b.type==='fixed').reduce((s,b)=>s+b.amt,0);
-  const simReal = S.bank - simBills;
-  const simSafe = Math.max(0,(S.bank - fixedOnly - extra) / daysUntilPay());
-
-  const el = document.getElementById('sim-result');
-  el.textContent = (simReal>=0?'$':'-$')+Math.abs(Math.round(simReal)).toLocaleString();
-  el.style.color = simReal>=200?'#FFD600':simReal>=0?'#EF9F27':'#E8157A';
-
-  const saved = Object.keys(simSkipped).filter(k=>simSkipped[k]);
-  const savedAmt = p.bills.filter(b=>simSkipped[b.name]).reduce((s,b)=>s+b.amt,0);
-  const grocDiff = 200-grocAmt;
-  document.getElementById('sim-breakdown').textContent =
-    'bills $'+Math.round(simBills)+
-    (extra>0?' · extra -$'+extra:'')+
-    (savedAmt>0?' · skipped +$'+savedAmt:'')+
-    (grocDiff!==0?' · groceries '+(grocDiff>0?'+':'')+grocDiff:'');
-
-  // sim chart — show all periods with this cycle adjusted
-  const nets = calcProjectionNets().map((n,i)=> i===S.selected ? Math.round(S.bank - simBills) : n);
-  const colors = nets.map(n=>n>=500?'#3B6D11':n>=0?'#BA7517':'#E24B4A');
-  const ctx = document.getElementById('sim-chart').getContext('2d');
-  if(simChart) simChart.destroy();
-  simChart = new Chart(ctx,{
-    type:'bar',
-    data:{labels:periods.map(p=>p.label),datasets:[{data:nets,backgroundColor:colors,borderColor:'#111',borderWidth:2,borderRadius:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString()}}},
-      scales:{x:{ticks:{font:{family:'Space Mono',size:9},color:'#444',autoSkip:false,maxRotation:0},grid:{display:false},border:{color:'#111',width:1}},
-              y:{ticks:{font:{family:'Space Mono',size:9},color:'#888',callback:v=>'$'+v},grid:{color:'rgba(0,0,0,0.06)'},border:{display:false},beginAtZero:false}}}
-  });
-}
-
-/* ── AI ENGINE ── */
-let lastAiAnswer="", lastAiQuestion="";
-let currentEngine = 'gemini'; // 'gemini' | 'webllm'
-let webllmEngine = null;
-let webllmReady = false;
-
-function setEngine(e){
-  currentEngine = e;
-  const bg = '#111', fg = '#FFD600', bg2 = '#fff', fg2 = '#111';
-  document.getElementById('btn-gemini').style.background = e==='gemini'?bg:bg2;
-  document.getElementById('btn-gemini').style.color = e==='gemini'?fg:fg2;
-  document.getElementById('btn-webllm').style.background = e==='webllm'?bg:bg2;
-  document.getElementById('btn-webllm').style.color = e==='webllm'?fg:fg2;
-  const statusEl = document.getElementById('engine-status');
-  const loadWrap = document.getElementById('webllm-load-wrap');
-  if(e==='gemini'){
-    statusEl.textContent = '✦ Gemini Flash — cloud, needs internet';
-    loadWrap.style.display='none';
-  } else {
-    if(webllmReady){
-      statusEl.textContent = '◈ On-device model ready — fully offline';
-      loadWrap.style.display='none';
-    } else {
-      statusEl.textContent = '◈ Model not downloaded yet';
-      loadWrap.style.display='block';
-    }
-  }
-}
-
-async function loadWebLLM(){
-  const statusEl = document.getElementById('engine-status');
-  const progressWrap = document.getElementById('webllm-progress');
-  const bar = document.getElementById('webllm-bar');
-  const pct = document.getElementById('webllm-pct');
-  const loadBtn = document.getElementById('webllm-load-wrap').querySelector('button');
-
-  if(!window.WebLLM){ 
-    statusEl.textContent = 'WebLLM not loaded yet, try again in a moment.';
-    return; 
-  }
-
-  loadBtn.disabled = true;
-  loadBtn.textContent = 'DOWNLOADING...';
-  progressWrap.style.display='block';
-  statusEl.textContent = 'Starting download...';
-
-  try{
-    webllmEngine = await window.WebLLM.CreateMLCEngine('gemma-2-2b-it-q4f32_1-MLC', {
-      initProgressCallback: (p) => {
-        const prog = Math.round((p.progress||0)*100);
-        bar.style.width = prog+'%';
-        pct.textContent = prog+'% — '+( p.text||'loading...' );
-        statusEl.textContent = 'Downloading: '+prog+'%';
-      }
-    });
-    webllmReady = true;
-    statusEl.textContent = '◈ On-device model ready — fully offline';
-    progressWrap.style.display='none';
-    document.getElementById('webllm-load-wrap').style.display='none';
-  } catch(err){
-    statusEl.textContent = 'Download failed: '+err.message;
-    loadBtn.disabled=false;
-    loadBtn.textContent='RETRY DOWNLOAD ↗';
-  }
-}
-
-async function queryAI(prompt){
-  if(currentEngine==='gemini'){
-    const res = await fetch(GEMINI_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        contents:[{role:'user',parts:[{text:prompt}]}],
-        generationConfig:{maxOutputTokens:500,temperature:0.7}
-      })
-    });
-    const data = await res.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from Gemini.';
-  } else {
-    if(!webllmReady || !webllmEngine) throw new Error('On-device model not loaded. Download it first.');
-    const reply = await webllmEngine.chat.completions.create({
-      messages:[{role:'user',content:prompt}],
-      max_tokens:500,
-      temperature:0.7
-    });
-    return reply.choices[0]?.message?.content || 'No response.';
-  }
-}
-
-
-function buildAiPrompt(specific){
-  const nets = calcProjectionNets();
-  const periodDetails = periods.map((p,i)=>{
-    const fixed = p.bills.filter(b=>b.type==='fixed').reduce((s,b)=>s+b.amt,0);
-    const flex = p.bills.filter(b=>b.type==='flex').reduce((s,b)=>s+b.amt,0);
-    return `${p.label} (${p.shortCtx}): pay $${PAY}, fixed $${fixed}, flex $${flex}, net $${nets[i]}`;
-  }).join(' | ');
-
-  const base = `You are a cashflow analyst for Maciek. Here is his complete financial picture:
-BANK RIGHT NOW: $${S.bank}
-BIWEEKLY PAY: $${PAY}
-REAL BALANCE (bank minus fixed bills this cycle): $${Math.round(real())}
-SAFE PER DAY: $${Math.round(safePerDay())}
-
-6 PAY PERIODS AHEAD:
-${periodDetails}
-
-KEY FACTS:
-- Rent $1,050 hits every Jul 3, Jul 31, Aug 28 paycheck (unavoidable, paid by 3rd-4th of month)
-- Daycare $205 flexible but monthly
-- Non-alc beer $56/cycle cannot be skipped
-- Gemini $27/month cannot be skipped
-- Medication $30 every 28 days cannot be skipped
-- Staycation Jun 19 (2 weeks) and Aug 14-24 (birthday week) — expect higher spending
-- Skippable: Claude Pro $9, Spotify $12, clothing $200
-- Groceries budgeted $200/cycle but often goes over
-
-${specific ? 'USER QUESTION: '+specific : 'Give a full cashflow analysis: identify the 2-3 tightest moments, what to watch out for during staycations, and 3 concrete actionable suggestions to stay healthy. Be direct, specific with numbers, casual tone. Use short paragraphs, no bullet lists.'}`;
-  return base;
-}
-
-async function runAiProjection(){
-  const out = document.getElementById('aiproj-out');
-  const engine = currentEngine==='gemini'?'GEMINI':'ON-DEVICE';
-  out.innerHTML='<div class="thinking">'+engine+' is analysing your cashflow...</div>';
-  try{
-    const text = await queryAI(buildAiPrompt(null));
-    lastAiAnswer=text; lastAiQuestion='Full cashflow analysis';
-    out.innerHTML='<div class="ai-bubble"><div class="al">'+engine+' ANALYSIS</div>'+text.replace(/\n/g,'<br>')+'<br><button class="save-btn" onclick="saveAiProjection(lastAiQuestion,lastAiAnswer)">SAVE ↓</button></div>';
-  }catch(e){
-    out.innerHTML='<div class="ai-bubble"><div class="al" style="color:#E8157A">ERROR</div>'+e.message+'</div>';
-  }
-}
-
-async function runAiQ(q){
-  if(!q||!q.trim()) return;
-  document.getElementById('aiproj-q').value='';
-  const out = document.getElementById('aiproj-out');
-  const engine = currentEngine==='gemini'?'GEMINI':'ON-DEVICE';
-  out.innerHTML='<div class="thinking">'+engine+' thinking...</div>';
-  try{
-    const text = await queryAI(buildAiPrompt(q));
-    lastAiAnswer=text; lastAiQuestion=q;
-    out.innerHTML='<div class="ai-bubble"><div class="al">'+engine+'</div>'+text.replace(/\n/g,'<br>')+'<br><button class="save-btn" onclick="saveAiProjection(lastAiQuestion,lastAiAnswer)">SAVE ↓</button></div>';
-  }catch(e){
-    out.innerHTML='<div class="ai-bubble"><div class="al" style="color:#E8157A">ERROR</div>'+e.message+'</div>';
-  }
-}
-
-window.saveAiProjection=function(q,a){
-  const now=new Date().toLocaleDateString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  S.savedProjections.unshift({question:q,answer:a,label:q.substring(0,40),date:now,cycle:periods[S.selected].label});
-  saveState();
-  buildProjections();
-  switchTab('projections');
-};
-
-document.getElementById('aiproj-q').addEventListener('keydown',e=>{ if(e.key==='Enter') runAiQ(e.target.value); });
-
 
 /* ── MAIN REFRESH ── */
 function refresh(){
@@ -962,24 +584,6 @@ if('serviceWorker' in navigator){
     .catch(e=>console.log('SW failed:',e));
 }
 
-let deferredInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  const btn = document.getElementById('install-btn');
-  if(btn) btn.style.display = 'block';
-});
-window.addEventListener('appinstalled', () => {
-  const btn = document.getElementById('install-btn');
-  if(btn) btn.style.display = 'none';
-  deferredInstallPrompt = null;
-});
-window.triggerInstall = async function(){
-  if(!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  const { outcome } = await deferredInstallPrompt.userChoice;
-  if(outcome === 'accepted') deferredInstallPrompt = null;
-};
 </script>
 </body>
 </html>
