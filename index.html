@@ -887,7 +887,7 @@ function buildChart() {
     // Bar element
     const bar = document.createElement('div');
     bar.style.position = 'absolute';
-    bar.style.width = '24px';
+    bar.style.width = '16px';
     bar.style.height = heightPx + 'px';
     bar.style.border = '2px solid var(--border-color)';
     
@@ -904,7 +904,7 @@ function buildChart() {
     // Label inside or above/below bar
     const valLbl = document.createElement('div');
     valLbl.style.fontFamily = "'Space Mono', monospace";
-    valLbl.style.fontSize = '10px';
+    valLbl.style.fontSize = '12px';
     valLbl.style.fontWeight = '700';
     valLbl.style.position = 'absolute';
     valLbl.style.width = '100px'; // Wide enough to prevent wrapping
@@ -953,25 +953,28 @@ function buildBillsToday(){
   const unpaid=p.bills.filter(b=>!b.paid).length;
   document.getElementById('remaining-count').textContent=unpaid+' REMAINING';
   p.bills.forEach((b,j)=>{
-    if(b.paid) return; // Paid bills are shown in Settings only
-    const d=document.createElement('div');
-    d.className='bill-item';
-    const amtCls='amt-input'+(b.type==='flex'?' flex-c':'');
-
-    // Skipped tag logic
+    const isPaid=b.paid;
     const isSkipped = b.originalCycleIndex !== undefined && b.originalCycleIndex !== S.selected;
+    
+    // If it is skipped from another cycle and paid, do not render here (it returned to its original cycle)
+    if (isPaid && isSkipped) return;
+
+    const d=document.createElement('div');
+    d.className='bill-item' + (isPaid ? ' is-paid' : '');
+    const amtCls='amt-input'+(b.type==='flex'?' flex-c':'')+(isPaid ? ' dim' : '');
+
     const skippedTag = isSkipped ? `<span class="skipped-badge" onclick="event.stopPropagation(); revertBill(${S.selected}, ${j})">Skipped ↩</span>` : '';
 
     d.innerHTML=`
-      <div class="bcheck" onclick="togglePaid(${S.selected},${j})"></div>
+      <div class="bcheck${isPaid ? ' on' : ''}" onclick="togglePaid(${S.selected},${j})">${isPaid ? '✓' : ''}</div>
       <div class="binfo">
-        <div class="bname">${b.name}${skippedTag}</div>
+        <div class="bname${isPaid ? ' dim' : ''}">${b.name}${skippedTag}</div>
         <div class="bmeta">${b.due}${b.type==='flex'?' · FLEXIBLE':''}</div>
       </div>
       <input class="${amtCls}" type="number" value="${b.amt}" min="0" step="1"
         onchange="updateAmt(${S.selected},${j},this.value)"
         onclick="this.select()" />
-      ${S.selected < S.periods.length - 1 ? `<button class="bskip" onclick="event.stopPropagation(); manualSkipBill(${S.selected}, ${j})" title="Skip to next cycle">⏭️</button>` : ''}
+      ${!isPaid && S.selected < S.periods.length - 1 ? `<button class="bskip" onclick="event.stopPropagation(); manualSkipBill(${S.selected}, ${j})" title="Skip to next cycle">⏭️</button>` : ''}
     `;
     el.appendChild(d);
   });
