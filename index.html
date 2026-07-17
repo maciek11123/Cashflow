@@ -10,12 +10,18 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="CASHFLOW"/>
 <link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="cashflow-icon-192.png"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
+:root {
+  --main-bg: #FFD600;
+  --text-color: #111;
+  --border-color: #111;
+  --card-bg: #fff;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-height:100vh}
+html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var(--text-color);min-height:100vh}
 .app{max-width:420px;margin:0 auto;padding:14px 12px 90px}
 
 /* top bar */
@@ -26,13 +32,13 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 /* cycle strip */
 .cycle-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:10px;scrollbar-width:none}
 .cycle-strip::-webkit-scrollbar{display:none}
-.cpill{flex-shrink:0;border:2.5px solid #111;border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer;background:#fff;font-family:'Space Mono',monospace}
-.cpill.active{background:#111;color:#FFD600}
+.cpill{flex-shrink:0;border:2.5px solid var(--border-color);border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer;background:#fff;font-family:'Space Mono',monospace}
+.cpill.active{background:var(--border-color);color:var(--main-bg)}
 .cpill.rent{border-color:#E24B4A}
 .cpill.vac{border-color:#1D9E75}
 
 /* real balance hero */
-.hero-card{background:#fff;border:3px solid #111;padding:14px;margin-bottom:8px}
+.hero-card{background:var(--card-bg);border:3px solid var(--border-color);padding:14px;margin-bottom:8px;color:#111}
 .hero-label{font-size:10px;letter-spacing:.14em;font-weight:700;color:#888;margin-bottom:4px}
 .real-num{font-size:40px;font-weight:700;line-height:1;margin-bottom:3px}
 .real-num.pos{color:#111}
@@ -43,52 +49,52 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 .alert-bar{border:2px solid #E8157A;padding:7px 10px;font-size:11px;font-weight:700;color:#E8157A;margin-bottom:10px;display:none}
 .alert-bar.show{display:block}
 .two-chips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
-.chip{border:2.5px solid #111;padding:10px 12px}
+.chip{border:2.5px solid var(--border-color);padding:10px 12px;color:#111}
 .chip.cyan{background:#00E5FF}
 .chip.pink{background:#E8157A;color:#fff}
 .chip .cl{font-size:9px;letter-spacing:.1em;font-weight:700;margin-bottom:3px}
 .chip .cv{font-size:17px;font-weight:700;line-height:1}
 .chip .cs{font-size:10px;opacity:.75;margin-top:2px}
-.bank-row{display:flex;align-items:center;gap:8px;border-top:2px solid #111;padding-top:10px}
+.bank-row{display:flex;align-items:center;gap:8px;border-top:2px solid var(--border-color);padding-top:10px}
 .bank-label{font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;flex:1}
-.bank-input{border:2px solid #111;padding:6px 10px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;width:110px;text-align:right;background:#fff;outline:none}
-.bank-input:focus{background:#FFD600}
+.bank-input{border:2px solid var(--border-color);padding:6px 10px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;width:110px;text-align:right;background:#fff;outline:none}
+.bank-input:focus{background:var(--main-bg)}
 
 /* graph */
-.graph-card{background:#fff;border:3px solid #111;padding:14px;margin-bottom:8px}
+.graph-card{background:var(--card-bg);border:3px solid var(--border-color);padding:14px;margin-bottom:8px;color:#111}
 .graph-label{font-size:10px;letter-spacing:.14em;font-weight:700;margin-bottom:8px}
 .graph-wrap{position:relative;height:100px}
 
 /* nav tabs */
-.nav-tabs{display:flex;position:fixed;bottom:0;left:0;right:0;max-width:420px;margin:0 auto;border-top:3px solid #111;border-bottom:none;background:#FFD600;z-index:100}
-.ntab{flex:1;padding:12px 4px 16px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer;text-align:center;border:none;background:transparent;border-right:2px solid #111;color:#111}
+.nav-tabs{display:flex;position:fixed;bottom:0;left:0;right:0;max-width:420px;margin:0 auto;border-top:3px solid var(--border-color);border-bottom:none;background:var(--main-bg);z-index:100}
+.ntab{flex:1;padding:12px 4px 16px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.04em;cursor:pointer;text-align:center;border:none;background:transparent;border-right:2px solid var(--border-color);color:var(--text-color)}
 .ntab:last-child{border-right:none}
-.ntab.active{background:#111;color:#FFD600}
+.ntab.active{background:var(--border-color);color:var(--main-bg)}
 
 /* tab panes */
 .pane{display:none}
 .pane.active{display:block}
 
 /* bills */
-.section-hdr{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.12em;font-weight:700;color:#444;margin:0 0 6px}
-.bill-item{background:#ffffff !important;border:2.5px solid #111;padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px}
+.section-hdr{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--text-color);margin:0 0 6px}
+.bill-item{background:var(--card-bg) !important;border:2.5px solid var(--border-color);padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;color:#111}
 .bill-item.is-paid{background:#f0f0f0 !important;border-style:dashed;border-color:#aaa}
-.bcheck{width:18px;height:18px;border:2.5px solid #111;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;font-weight:700}
-.bcheck.on{background:#111;color:#FFD600;border-color:#111}
+.bcheck{width:18px;height:18px;border:2.5px solid var(--border-color);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;font-weight:700}
+.bcheck.on{background:var(--border-color);color:var(--main-bg);border-color:var(--border-color)}
 .binfo{flex:1;min-width:0}
-.bname{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bname{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;flex-wrap:wrap;}
 .bname.dim{color:#aaa}
 .bmeta{font-size:10px;color:#999;letter-spacing:.04em;margin-top:1px}
 .bamt{font-weight:700;font-size:13px;white-space:nowrap}
 .bamt.flex-c{color:#7a3f00}
 .bamt.dim{color:#aaa}
-.amt-input{border:none;border-bottom:2px solid #111;background:transparent;font-family:Space Mono,monospace;font-size:13px;font-weight:700;width:64px;text-align:right;outline:none;padding:1px 2px}
+.amt-input{border:none;border-bottom:2px solid var(--border-color);background:transparent;font-family:Space Mono,monospace;font-size:13px;font-weight:700;width:64px;text-align:right;outline:none;padding:1px 2px}
 .amt-input:focus{border-bottom:2px solid #E8157A;background:#FFF9C4}
 .amt-input.flex-c{color:#7a3f00}
 .amt-input.dim{color:#aaa}
 
 /* projections */
-.proj-item{background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:6px}
+.proj-item{background:var(--card-bg);border:2.5px solid var(--border-color);padding:12px;margin-bottom:6px;color:#111}
 .proj-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .proj-title{font-size:13px;font-weight:700}
 .proj-del{font-size:11px;color:#E8157A;cursor:pointer;font-weight:700;border:none;background:none;font-family:'Space Mono',monospace}
@@ -96,13 +102,80 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 .proj-body{font-size:12px;line-height:1.6}
 .proj-impact{font-size:11px;color:#BA7517;font-weight:700;margin-top:5px}
 .proj-date{font-size:10px;color:#aaa;letter-spacing:.06em;margin-top:4px}
-.save-btn{border:2.5px solid #111;background:#FFD600;padding:6px 12px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px}
-.save-btn:hover{background:#111;color:#FFD600}
+.save-btn{border:2.5px solid var(--border-color);background:var(--main-bg);padding:6px 12px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px}
+.save-btn:hover{background:var(--border-color);color:var(--main-bg)}
 .empty-state{font-size:12px;color:#888;padding:20px 0;text-align:center}
 
 
 /* bottom nav */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#FFD600;border-top:3px solid #111;display:flex;max-width:420px;margin:0 auto}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--main-bg);border-top:3px solid var(--border-color);display:flex;max-width:420px;margin:0 auto}
+
+/* Skipped / skip styles */
+.skipped-badge {
+  display: inline-block;
+  font-size: 8px;
+  background: var(--main-bg);
+  color: var(--text-color);
+  border: 1.5px solid var(--border-color);
+  padding: 1px 4px;
+  font-weight: 700;
+  margin-left: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.skipped-badge:hover {
+  background: var(--border-color);
+  color: var(--main-bg);
+}
+.bskip {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bskip:hover {
+  transform: scale(1.1);
+}
+
+.undo-toast {
+  display: none;
+  position: fixed;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--border-color);
+  color: var(--main-bg);
+  border: 2.5px solid var(--border-color);
+  padding: 10px 16px;
+  z-index: 200;
+  font-size: 12px;
+  font-weight: 700;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 3px 3px 0 #000;
+  max-width: 380px;
+  width: calc(100% - 24px);
+  justify-content: space-between;
+}
+.undo-btn {
+  background: var(--main-bg);
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  padding: 3px 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.undo-btn:hover {
+  background: var(--border-color);
+  color: var(--main-bg);
+}
 </style>
 </head>
 <body>
@@ -110,14 +183,19 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 
 <div class="top-bar">
   <span class="brand">CASHFLOW</span>
-  <span class="date-lbl" id="date-lbl"></span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="date-lbl" id="date-lbl"></span>
+    <button id="theme-toggle-btn" style="background:transparent;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;outline:none;" title="Change Theme">🎨</button>
+  </div>
+</div>
+<div id="theme-swatches" style="display:none;gap:8px;padding:8px 10px;background:var(--card-bg);border:2.5px solid var(--border-color);margin-bottom:10px;justify-content:center;align-items:center;box-shadow:3px 3px 0 #000;color:var(--text-color);">
 </div>
 
 <div class="cycle-strip" id="cycle-strip"></div>
 
 <!-- HERO: Real Balance -->
 <div class="hero-card">
-  <div class="hero-label">REAL BALANCE <span id="cycle-badge" style="float:right;background:#FFD600;color:#111;padding:1px 7px;font-size:10px;letter-spacing:.1em;font-weight:700">—</span></div>
+  <div class="hero-label">REAL BALANCE <span id="cycle-badge" style="float:right;background:var(--main-bg);color:var(--text-color);padding:1px 7px;font-size:10px;letter-spacing:.1em;font-weight:700">—</span></div>
   <div class="real-num pos" id="real-num">—</div>
   <div class="hero-sub">
     <span>BANK <b id="display-bank">—</b></span>
@@ -171,46 +249,7 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 </div>
 
 
-<!-- SIMULATE TAB -->
-<div class="pane" id="pane-sim">
-  <div class="section-hdr"><span>SIMULATE SPENDING</span><span id="sim-reset" style="cursor:pointer;color:#E8157A" onclick="simReset()">RESET ×</span></div>
-
-  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">EXTRA ONE-TIME SPEND</div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-      <input id="sim-label" type="text" placeholder="e.g. shoes, dinner..." style="flex:1;border:2px solid #111;padding:6px 8px;font-family:Space Mono,monospace;font-size:12px;background:#fff;outline:none" />
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:22px;font-weight:700">$</span>
-      <input id="sim-amount" type="range" min="0" max="500" step="5" value="0" style="flex:1" oninput="simUpdate()" />
-      <span id="sim-amt-out" style="font-size:18px;font-weight:700;min-width:48px">$0</span>
-    </div>
-  </div>
-
-  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">SKIP FLEXIBLE BILLS</div>
-    <div id="sim-flex-toggles"></div>
-  </div>
-
-  <div style="background:#fff;border:2.5px solid #111;padding:12px;margin-bottom:8px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:6px">GROCERIES THIS CYCLE</div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <input id="sim-groceries" type="range" min="0" max="400" step="10" value="200" style="flex:1" oninput="simUpdate()" />
-      <span id="sim-groc-out" style="font-size:14px;font-weight:700;min-width:48px">$200</span>
-    </div>
-  </div>
-
-  <div style="background:#111;color:#FFD600;border:2.5px solid #111;padding:14px;margin-bottom:8px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#FFD600;opacity:.7;margin-bottom:6px">SIMULATED REAL BALANCE</div>
-    <div id="sim-result" style="font-size:34px;font-weight:700">—</div>
-    <div id="sim-breakdown" style="font-size:11px;opacity:.8;margin-top:4px">—</div>
-  </div>
-
-  <div style="background:#fff;border:2.5px solid #111;padding:12px">
-    <div style="font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;margin-bottom:8px">IMPACT ON ALL CYCLES</div>
-    <div class="graph-wrap" style="height:90px"><canvas id="sim-chart" role="img" aria-label="Simulated projection">—</canvas></div>
-  </div>
-</div>
+<!-- SIMULATE TAB REMOVED -->
 
 
 
@@ -218,9 +257,14 @@ html,body{font-family:'Space Mono',monospace;background:#FFD600;color:#111;min-h
 <div class="nav-tabs">
   <button class="ntab active" onclick="switchTab('today')">TODAY</button>
   <button class="ntab" onclick="switchTab('bills')">BILLS</button>
-  <button class="ntab" onclick="switchTab('sim')">SIM</button>
   <button class="ntab" onclick="shiftCycle(-1)">← PREV</button>
   <button class="ntab" onclick="shiftCycle(1)">NEXT →</button>
+</div>
+
+<!-- Undo toast wrapper -->
+<div id="undo-toast" class="undo-toast">
+  <span id="undo-toast-text"></span>
+  <button id="undo-toast-btn" class="undo-btn">UNDO</button>
 </div>
 </div>
 
@@ -230,7 +274,7 @@ const PAY = 1790;
 
 /* ── PERIODS ── */
 const periods = [
-  {label:'Jun 19',nextPay:'Jul 3',nextPayDate:'2026-07-03',shortCtx:'staycation',rent:false,vac:true,bills:[
+  {label:'Jun 19',startDateStr:'2026-06-19',nextPay:'Jul 3',nextPayDate:'2026-07-03',shortCtx:'staycation',rent:false,vac:true,bills:[
     {name:'Daycamp (last)',amt:127,type:'fixed',due:'JUN 19',paid:false},
     {name:'Janelle birthday',amt:200,type:'flex',due:'JUN 19',paid:false},
     {name:'Fizz internet',amt:55,type:'fixed',due:'JUN 23',paid:false},
@@ -241,7 +285,7 @@ const periods = [
     {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
     {name:'Staycation extra',amt:150,type:'flex',due:'THIS CYCLE',paid:false},
   ]},
-  {label:'Jul 3',nextPay:'Jul 17',nextPayDate:'2026-07-17',shortCtx:'rent · tight',rent:true,vac:false,bills:[
+  {label:'Jul 3',startDateStr:'2026-07-03',nextPay:'Jul 17',nextPayDate:'2026-07-17',shortCtx:'rent · tight',rent:true,vac:false,bills:[
     {name:'Rent + buffer',amt:1050,type:'fixed',due:'JUL 1-4',paid:false},
     {name:'Daycare',amt:205,type:'flex',due:'JUL 1',paid:false},
     {name:'Gemini',amt:27,type:'fixed',due:'JUL 3',paid:false},
@@ -253,7 +297,7 @@ const periods = [
     {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
     {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
   ]},
-  {label:'Jul 17',nextPay:'Jul 31',nextPayDate:'2026-07-31',shortCtx:'lighter',rent:false,vac:false,bills:[
+  {label:'Jul 17',startDateStr:'2026-07-17',nextPay:'Jul 31',nextPayDate:'2026-07-31',shortCtx:'lighter',rent:false,vac:false,bills:[
     {name:'Rogers',amt:170,type:'flex',due:'MID-JUL',paid:false},
     {name:'Monitor loan',amt:130,type:'flex',due:'MONTHLY',paid:false},
     {name:'PlayStation',amt:20,type:'fixed',due:'JUL 19',paid:false},
@@ -264,7 +308,7 @@ const periods = [
     {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
     {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
   ]},
-  {label:'Jul 31',nextPay:'Aug 14',nextPayDate:'2026-08-14',shortCtx:'rent · tight',rent:true,vac:false,bills:[
+  {label:'Jul 31',startDateStr:'2026-07-31',nextPay:'Aug 14',nextPayDate:'2026-08-14',shortCtx:'rent · tight',rent:true,vac:false,bills:[
     {name:'Rent + buffer',amt:1050,type:'fixed',due:'AUG 1-4',paid:false},
     {name:'Daycare',amt:205,type:'flex',due:'AUG 1',paid:false},
     {name:'Gemini',amt:27,type:'fixed',due:'AUG 3',paid:false},
@@ -276,7 +320,7 @@ const periods = [
     {name:'Non-essentials',amt:100,type:'flex',due:'BIWEEKLY',paid:false},
     {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
   ]},
-  {label:'Aug 14',nextPay:'Aug 28',nextPayDate:'2026-08-28',shortCtx:'bday staycation',rent:false,vac:true,bills:[
+  {label:'Aug 14',startDateStr:'2026-08-14',nextPay:'Aug 28',nextPayDate:'2026-08-28',shortCtx:'bday staycation',rent:false,vac:true,bills:[
     {name:'Rogers',amt:170,type:'flex',due:'MID-AUG',paid:false},
     {name:'Monitor loan',amt:130,type:'flex',due:'MONTHLY',paid:false},
     {name:'PlayStation',amt:20,type:'fixed',due:'AUG 19',paid:false},
@@ -288,7 +332,7 @@ const periods = [
     {name:'Non-alc beer',amt:56,type:'fixed',due:'ONGOING',paid:false},
     {name:'Birthday extra',amt:200,type:'flex',due:'AUG 15-24',paid:false},
   ]},
-  {label:'Aug 28',nextPay:'Sep 11',nextPayDate:'2026-09-11',shortCtx:'rent · post-bday',rent:true,vac:false,bills:[
+  {label:'Aug 28',startDateStr:'2026-08-28',nextPay:'Sep 11',nextPayDate:'2026-09-11',shortCtx:'rent · post-bday',rent:true,vac:false,bills:[
     {name:'Rent + buffer',amt:1050,type:'fixed',due:'SEP 1-4',paid:false},
     {name:'Daycare',amt:205,type:'flex',due:'SEP 1',paid:false},
     {name:'Gemini',amt:27,type:'fixed',due:'SEP 3',paid:false},
@@ -302,16 +346,173 @@ const periods = [
   ]}
 ];
 
+/* ── HELPERS & THEMES ── */
+function parseLocalDate(dateStr) {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+const THEMES = {
+  yellow: { bg: '#FFD600', text: '#111', border: '#111', card: '#fff' },
+  cyan: { bg: '#00E5FF', text: '#111', border: '#111', card: '#fff' },
+  green: { bg: '#00E676', text: '#111', border: '#111', card: '#fff' },
+  pink: { bg: '#E8157A', text: '#fff', border: '#111', card: '#fff' },
+  orange: { bg: '#FF6D00', text: '#111', border: '#111', card: '#fff' },
+  dark: { bg: '#1a1a1a', text: '#eee', border: '#eee', card: '#262626' }
+};
+
+function applyTheme(themeKey) {
+  const theme = THEMES[themeKey] || THEMES.yellow;
+  document.documentElement.style.setProperty('--main-bg', theme.bg);
+  document.documentElement.style.setProperty('--text-color', theme.text);
+  document.documentElement.style.setProperty('--border-color', theme.border);
+  document.documentElement.style.setProperty('--card-bg', theme.card);
+  
+  // Update meta theme color
+  let metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) metaTheme.setAttribute('content', theme.bg);
+  
+  S.theme = themeKey;
+  saveState();
+}
+
+function buildThemeSwatches() {
+  const container = document.getElementById('theme-swatches');
+  if (!container) return;
+  container.innerHTML = '<span style="font-size:10px;font-weight:700;margin-right:4px;">THEME:</span>';
+  
+  Object.keys(THEMES).forEach(key => {
+    const swatch = document.createElement('div');
+    swatch.style.width = '20px';
+    swatch.style.height = '20px';
+    swatch.style.background = THEMES[key].bg;
+    swatch.style.border = '2px solid var(--border-color)';
+    swatch.style.cursor = 'pointer';
+    swatch.style.borderRadius = '50%';
+    swatch.title = key;
+    swatch.onclick = () => {
+      applyTheme(key);
+      buildThemeSwatches();
+      buildChart();
+    };
+    
+    if (S.theme === key) {
+      swatch.style.transform = 'scale(1.2)';
+      swatch.style.boxShadow = '0 0 0 2px var(--border-color)';
+    }
+    
+    container.appendChild(swatch);
+  });
+}
+
+function getActiveCycleIndex() {
+  const now = new Date(); now.setHours(0,0,0,0);
+  for (let i = 0; i < periods.length; i++) {
+    const start = parseLocalDate(periods[i].startDateStr);
+    const end = parseLocalDate(periods[i].nextPayDate);
+    if (now >= start && now < end) {
+      return i;
+    }
+  }
+  if (now < parseLocalDate(periods[0].startDateStr)) return 0;
+  return periods.length - 1;
+}
+
+function autoSweepUnpaidBills() {
+  const activeIdx = getActiveCycleIndex();
+  let movedAny = false;
+  for (let i = 0; i < activeIdx; i++) {
+    const pastPeriod = S.periods[i];
+    for (let j = pastPeriod.bills.length - 1; j >= 0; j--) {
+      const bill = pastPeriod.bills[j];
+      if (!bill.paid) {
+        if (bill.originalCycleIndex === undefined) {
+          bill.originalCycleIndex = i;
+        }
+        pastPeriod.bills.splice(j, 1);
+        S.periods[activeIdx].bills.push(bill);
+        movedAny = true;
+      }
+    }
+  }
+  if (movedAny) {
+    saveState();
+  }
+}
+
 /* ── STATE ── */
 let S = {
   bank: 1790,
   selected: 0,
-  paidMap: periods.map(p => p.bills.map(() => false)),
-  savedProjections: []
+  periods: [],
+  savedProjections: [],
+  theme: 'yellow'
 };
-function loadState(){ try{ const s=localStorage.getItem('cf-v1'); if(s){ const p=JSON.parse(s); S.bank=p.bank||1790; S.paidMap=p.paidMap||S.paidMap; S.savedProjections=p.savedProjections||[]; S.selected=p.selected||0; if(p.billAmts){ p.billAmts.forEach((pa,pi)=>{ pa.forEach((amt,bi)=>{ if(periods[pi]&&periods[pi].bills[bi]) periods[pi].bills[bi].amt=amt; }); }); } } }catch(e){} }
-function saveState(){ localStorage.setItem('cf-v1', JSON.stringify({bank:S.bank,paidMap:S.paidMap,savedProjections:S.savedProjections,selected:S.selected,billAmts:periods.map(p=>p.bills.map(b=>b.amt))})); }
+
+function deepCopyPeriods() {
+  return JSON.parse(JSON.stringify(periods));
+}
+
+function loadState(){
+  try{
+    const s=localStorage.getItem('cf-v1');
+    if(s){
+      const p=JSON.parse(s);
+      S.bank=p.bank!==undefined?p.bank:1790;
+      S.selected=p.selected!==undefined?p.selected:0;
+      S.savedProjections=p.savedProjections||[];
+      S.theme=p.theme||'yellow';
+      
+      if(p.periods){
+        S.periods=p.periods;
+      } else {
+        // Migrate from old paidMap and billAmts format
+        S.periods=deepCopyPeriods();
+        if(p.paidMap){
+          p.paidMap.forEach((pa,pi)=>{
+            if(S.periods[pi]){
+              pa.forEach((paidVal,bi)=>{
+                if(S.periods[pi].bills[bi]){
+                  S.periods[pi].bills[bi].paid=paidVal;
+                }
+              });
+            }
+          });
+        }
+        if(p.billAmts){
+          p.billAmts.forEach((pa,pi)=>{
+            if(S.periods[pi]){
+              pa.forEach((amt,bi)=>{
+                if(S.periods[pi].bills[bi]){
+                  S.periods[pi].bills[bi].amt=amt;
+                }
+              });
+            }
+          });
+        }
+      }
+    } else {
+      S.periods=deepCopyPeriods();
+      S.selected=getActiveCycleIndex();
+    }
+  }catch(e){
+    S.periods=deepCopyPeriods();
+    S.selected=0;
+  }
+}
+
+function saveState(){
+  localStorage.setItem('cf-v1', JSON.stringify({
+    bank: S.bank,
+    periods: S.periods,
+    savedProjections: S.savedProjections,
+    selected: S.selected,
+    theme: S.theme
+  }));
+}
+
 loadState();
+autoSweepUnpaidBills();
 
 /* ── MATH (Note$ logic) ──
    real = bank - unpaid bills THIS cycle
@@ -319,9 +520,11 @@ loadState();
    Projection per period = PAY - total bills that period
 */
 function unpaidBills(i){
-  return periods[i].bills.reduce((s,b,j)=> S.paidMap[i][j] ? s : s+b.amt, 0);
+  return S.periods[i].bills.reduce((s,b)=> b.paid ? s : s+b.amt, 0);
 }
-function totalBills(i){ return periods[i].bills.reduce((s,b)=>s+b.amt,0); }
+function totalBills(i){
+  return S.periods[i].bills.reduce((s,b)=> s+b.amt, 0);
+}
 
 /* Projected starting bank for any cycle:
    cycle 0 = real S.bank (current actual balance)
@@ -332,14 +535,17 @@ function projectedBank(i){
 }
 
 function real(){ return projectedBank(S.selected) - unpaidBills(S.selected); }
+
 function daysUntilPay(){
   const now = new Date(); now.setHours(0,0,0,0);
-  const np = new Date(periods[S.selected].nextPayDate); np.setHours(0,0,0,0);
-  return Math.max(Math.round((np-now)/86400000), 1);
+  const np = parseLocalDate(S.periods[S.selected].nextPayDate);
+  // Calculate absolute difference in days between Today and Next Pay
+  return Math.max(Math.abs(Math.round((np - now) / 86400000)), 1);
 }
+
 function safePerDay(){
   const bank = projectedBank(S.selected);
-  const fixedThisCycle = periods[S.selected].bills
+  const fixedThisCycle = S.periods[S.selected].bills
     .filter(b => b.type === 'fixed')
     .reduce((s,b) => s + b.amt, 0);
   const afterFixed = bank - fixedThisCycle;
@@ -350,7 +556,7 @@ function safePerDay(){
 function calcProjectionNets(){
   /* Period 0: closing = bank - unpaidBills (current cycle, actual balance)
      Period N: closing = PAY - totalBills (fresh start, no carryover) */
-  return periods.map((p,i) => {
+  return S.periods.map((p,i) => {
     if(i === 0) return Math.round(S.bank - unpaidBills(0));
     return Math.round(PAY - totalBills(i));
   });
@@ -363,7 +569,7 @@ function amtCls(n){ return n>=200?'pos':n>=0?'warn':'neg'; }
 function buildStrip(){
   const el=document.getElementById('cycle-strip');
   el.innerHTML='';
-  periods.forEach((p,i)=>{
+  S.periods.forEach((p,i)=>{
     const d=document.createElement('div');
     let cls='cpill'+(p.rent?' rent':p.vac?' vac':'')+(i===S.selected?' active':'');
     d.className=cls; d.textContent=(i+1)+' · '+p.label;
@@ -374,10 +580,10 @@ function buildStrip(){
 
 /* ── HERO ── */
 function buildHero(){
-  const r=real(), sf=safePerDay(), d=daysUntilPay();
+  const r=real(), sf=safePerDay();
   const ub=unpaidBills(S.selected);
   const pb=projectedBank(S.selected);
-  document.getElementById('cycle-badge').textContent = 'CYCLE '+(S.selected+1)+'/'+periods.length;
+  document.getElementById('cycle-badge').textContent = 'CYCLE '+(S.selected+1)+'/'+S.periods.length;
   document.getElementById('real-num').textContent=$n(r);
   document.getElementById('real-num').className='real-num '+amtCls(r);
   document.getElementById('display-bank').textContent=S.selected===0?$n(S.bank):$n(pb)+' proj.';
@@ -390,8 +596,21 @@ function buildHero(){
   else{ alert.className='alert-bar'; }
 
   document.getElementById('chip-safe').textContent=$n(sf);
-  document.getElementById('chip-nextpay').textContent=periods[S.selected].nextPay;
-  document.getElementById('chip-days').textContent=d+' day'+(d===1?'':'s')+' away';
+  document.getElementById('chip-nextpay').textContent=S.periods[S.selected].nextPay;
+
+  // Custom days remaining calculation with past/future suffix
+  const now = new Date(); now.setHours(0,0,0,0);
+  const np = parseLocalDate(S.periods[S.selected].nextPayDate);
+  const diffDays = Math.round((np - now) / 86400000);
+  const absDays = Math.abs(diffDays);
+  let suffix = diffDays < 0 ? ' ago' : ' away';
+  let daysStr = '';
+  if (diffDays === 0) {
+    daysStr = 'today';
+  } else {
+    daysStr = absDays + ' day' + (absDays === 1 ? '' : 's') + suffix;
+  }
+  document.getElementById('chip-days').textContent=daysStr;
 }
 
 /* ── CHART ── */
@@ -401,18 +620,23 @@ function buildChart(){
   const colors=nets.map(n=>n>=500?'#3B6D11':n>=0?'#BA7517':'#E24B4A');
   const ctx=document.getElementById('proj-chart').getContext('2d');
   if(chart) chart.destroy();
+
+  const isDark = S.theme === 'dark';
+  const tickColor = isDark ? '#eee' : '#444';
+  const borderColor = isDark ? '#eee' : '#111';
+
   chart=new Chart(ctx,{
     type:'bar',
     data:{
-      labels:periods.map(p=>p.label),
-      datasets:[{data:nets,backgroundColor:colors,borderColor:'#111',borderWidth:2,borderRadius:0}]
+      labels:S.periods.map(p=>p.label),
+      datasets:[{data:nets,backgroundColor:colors,borderColor:borderColor,borderWidth:2,borderRadius:0}]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString()}}},
       scales:{
-        x:{ticks:{font:{family:'Space Mono',size:10},color:'#444',autoSkip:false,maxRotation:0},grid:{display:false},border:{color:'#111',width:2}},
-        y:{ticks:{font:{family:'Space Mono',size:10},color:'#888',callback:v=>'$'+v},grid:{color:'rgba(0,0,0,0.07)'},border:{display:false},beginAtZero:false}
+        x:{ticks:{font:{family:'Space Mono',size:10},color:tickColor,autoSkip:false,maxRotation:0},grid:{display:false},border:{color:borderColor,width:2}},
+        y:{ticks:{font:{family:'Space Mono',size:10},color:isDark ? '#aaa' : '#888',callback:v=>'$'+v},grid:{color:isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'},border:{display:false},beginAtZero:false}
       }
     }
   });
@@ -420,25 +644,32 @@ function buildChart(){
 
 /* ── BILLS TODAY ── */
 function buildBillsToday(){
-  const p=periods[S.selected];
+  const p=S.periods[S.selected];
   const el=document.getElementById('bill-list-today');
   el.innerHTML='';
-  const unpaid=S.paidMap[S.selected].filter(v=>!v).length;
+  const unpaid=p.bills.filter(b=>!b.paid).length;
   document.getElementById('remaining-count').textContent=unpaid+' REMAINING';
   p.bills.forEach((b,j)=>{
-    const isPaid=S.paidMap[S.selected][j];
+    const isPaid=b.paid;
     const d=document.createElement('div');
     d.className='bill-item'+(isPaid?' is-paid':'');
     const amtCls='amt-input'+(b.type==='flex'?' flex-c':'')+(isPaid?' dim':'');
+
+    // Skipped tag logic
+    const isSkipped = b.originalCycleIndex !== undefined && b.originalCycleIndex !== S.selected;
+    const skippedTag = isSkipped ? `<span class="skipped-badge" onclick="event.stopPropagation(); revertBill(${S.selected}, ${j})">Skipped ↩</span>` : '';
+
     d.innerHTML=`
       <div class="bcheck${isPaid?' on':''}" onclick="togglePaid(${S.selected},${j})">${isPaid?'✓':''}</div>
       <div class="binfo">
-        <div class="bname${isPaid?' dim':''}">${b.name}</div>
+        <div class="bname${isPaid?' dim':''}">${b.name}${skippedTag}</div>
         <div class="bmeta">${b.due}${b.type==='flex'?' · FLEXIBLE':''}</div>
       </div>
       <input class="${amtCls}" type="number" value="${b.amt}" min="0" step="1"
         onchange="updateAmt(${S.selected},${j},this.value)"
-        onclick="this.select()" />`;
+        onclick="this.select()" />
+      ${!isPaid && S.selected < S.periods.length - 1 ? `<button class="bskip" onclick="event.stopPropagation(); manualSkipBill(${S.selected}, ${j})" title="Skip to next cycle">⏭️</button>` : ''}
+    `;
     el.appendChild(d);
   });
 }
@@ -448,9 +679,9 @@ function buildBillsPaid(){
   const el=document.getElementById('bill-list-paid');
   el.innerHTML='';
   let paidCount=0;
-  periods.forEach((p,pi)=>{
+  S.periods.forEach((p,pi)=>{
     p.bills.forEach((b,bi)=>{
-      if(S.paidMap[pi][bi]){
+      if(b.paid){
         paidCount++;
         const d=document.createElement('div');
         d.className='bill-item is-paid';
@@ -472,6 +703,7 @@ function buildBillsPaid(){
 /* ── SAVED PROJECTIONS ── */
 function buildProjections(){
   const el=document.getElementById('proj-list');
+  if(!el) return;
   el.innerHTML='';
   if(S.savedProjections.length===0){
     el.innerHTML='<div class="empty-state">No saved projections yet.<br>Ask "What if..." and save the answer.</div>';
@@ -499,7 +731,7 @@ window.deleteProjection=function(i){
 };
 
 window.togglePaid=function(pi,bi){
-  S.paidMap[pi][bi]=!S.paidMap[pi][bi];
+  S.periods[pi].bills[bi].paid=!S.periods[pi].bills[bi].paid;
   saveState();
   buildHero();
   buildBillsToday();
@@ -510,13 +742,87 @@ window.togglePaid=function(pi,bi){
 window.updateAmt=function(pi,bi,val){
   const v=parseFloat(val);
   if(isNaN(v)||v<0) return;
-  periods[pi].bills[bi].amt=Math.round(v);
+  S.periods[pi].bills[bi].amt=Math.round(v);
   saveState();
   buildHero();
   buildChart();
-  buildSim && buildSim();
   document.getElementById('remaining-count').textContent=
-    S.paidMap[pi].filter(v=>!v).length+' REMAINING';
+    S.periods[pi].bills.filter(b=>!b.paid).length+' REMAINING';
+};
+
+/* ── MANUAL SKIP & REVERT ── */
+window.manualSkipBill = function(pi, bi) {
+  if (pi >= S.periods.length - 1) return;
+  const targetPi = pi + 1;
+  moveBill(pi, bi, targetPi, true);
+};
+
+function moveBill(fromPeriodIdx, billIdx, toPeriodIdx, isManual = false) {
+  const bill = S.periods[fromPeriodIdx].bills[billIdx];
+  if (bill.originalCycleIndex === undefined) {
+    bill.originalCycleIndex = fromPeriodIdx;
+  }
+  S.periods[fromPeriodIdx].bills.splice(billIdx, 1);
+  S.periods[toPeriodIdx].bills.push(bill);
+  saveState();
+  refresh();
+  if (currentTab === 'bills') buildBillsPaid();
+  buildChart();
+  
+  if (isManual) {
+    showUndoToast(bill, fromPeriodIdx, toPeriodIdx);
+  }
+}
+
+let lastSkippedInfo = null;
+let undoTimeout = null;
+
+function showUndoToast(bill, fromPeriodIdx, toPeriodIdx) {
+  lastSkippedInfo = { bill, fromPeriodIdx, toPeriodIdx };
+  const toast = document.getElementById('undo-toast');
+  const toastText = document.getElementById('undo-toast-text');
+  const targetLabel = S.periods[toPeriodIdx].label;
+  toastText.textContent = `Skipped "${bill.name}" to ${targetLabel}`;
+  toast.style.display = 'flex';
+  
+  if (undoTimeout) clearTimeout(undoTimeout);
+  undoTimeout = setTimeout(() => {
+    toast.style.display = 'none';
+    lastSkippedInfo = null;
+  }, 5000);
+}
+
+window.undoLastSkip = function() {
+  if (!lastSkippedInfo) return;
+  const { bill, fromPeriodIdx, toPeriodIdx } = lastSkippedInfo;
+  const idx = S.periods[toPeriodIdx].bills.indexOf(bill);
+  if (idx !== -1) {
+    S.periods[toPeriodIdx].bills.splice(idx, 1);
+    if (bill.originalCycleIndex === fromPeriodIdx) {
+      delete bill.originalCycleIndex;
+    }
+    S.periods[fromPeriodIdx].bills.push(bill);
+    saveState();
+    refresh();
+    if (currentTab === 'bills') buildBillsPaid();
+    buildChart();
+  }
+  document.getElementById('undo-toast').style.display = 'none';
+  lastSkippedInfo = null;
+  if (undoTimeout) clearTimeout(undoTimeout);
+};
+
+window.revertBill = function(pi, bi) {
+  const bill = S.periods[pi].bills[bi];
+  const origIdx = bill.originalCycleIndex;
+  if (origIdx === undefined) return;
+  delete bill.originalCycleIndex;
+  S.periods[pi].bills.splice(bi, 1);
+  S.periods[origIdx].bills.push(bill);
+  saveState();
+  refresh();
+  if (currentTab === 'bills') buildBillsPaid();
+  buildChart();
 };
 
 /* ── TABS ── */
@@ -526,10 +832,12 @@ window.switchTab=function(t){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
   document.getElementById('pane-'+t).classList.add('active');
-  const tabs=['today','bills','sim'];
-  document.querySelectorAll('.ntab')[tabs.indexOf(t)].classList.add('active');
+  const tabs=['today','bills'];
+  const idx = tabs.indexOf(t);
+  if(idx !== -1) {
+    document.querySelectorAll('.ntab')[idx].classList.add('active');
+  }
   if(t==='bills') buildBillsPaid();
-  if(t==='sim') buildSim();
 };
 
 /* ── BANK INPUT ── */
@@ -541,7 +849,7 @@ document.getElementById('bank-input').addEventListener('change',function(){
 /* ── SHIFT CYCLE ── */
 window.shiftCycle = function(dir){
   const next = S.selected + dir;
-  if(next < 0 || next >= periods.length) return;
+  if(next < 0 || next >= S.periods.length) return;
   S.selected = next;
   saveState();
   refresh();
@@ -550,13 +858,12 @@ window.shiftCycle = function(dir){
 
 function updateCycleNav(){
   const tabs = document.querySelectorAll('.ntab');
-  // tabs[3] = ← PREV, tabs[4] = NEXT →
-  const prevBtn = tabs[3], nextBtn = tabs[4];
+  const prevBtn = tabs[2], nextBtn = tabs[3];
   if(!prevBtn || !nextBtn) return;
   prevBtn.style.opacity = S.selected === 0 ? '0.3' : '1';
   prevBtn.style.pointerEvents = S.selected === 0 ? 'none' : 'auto';
-  nextBtn.style.opacity = S.selected === periods.length - 1 ? '0.3' : '1';
-  nextBtn.style.pointerEvents = S.selected === periods.length - 1 ? 'none' : 'auto';
+  nextBtn.style.opacity = S.selected === S.periods.length - 1 ? '0.3' : '1';
+  nextBtn.style.pointerEvents = S.selected === S.periods.length - 1 ? 'none' : 'auto';
 }
 
 /* ── MAIN REFRESH ── */
@@ -576,12 +883,25 @@ function refresh(){
     days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
 })();
 
+applyTheme(S.theme);
+buildThemeSwatches();
+
+document.getElementById('theme-toggle-btn').onclick = function(e) {
+  e.stopPropagation();
+  const panel = document.getElementById('theme-swatches');
+  panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+};
+
+document.getElementById('undo-toast-btn').onclick = function() {
+  undoLastSkip();
+};
+
 buildChart();
 refresh();
 
 // PWA service worker
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('cashflow-sw.js')
+  navigator.serviceWorker.register('sw.js')
     .then(()=>console.log('SW registered'))
     .catch(e=>console.log('SW failed:',e));
 }
