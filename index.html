@@ -57,7 +57,7 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
 .chip .cs{font-size:10px;opacity:.75;margin-top:2px}
 .bank-row{display:flex;align-items:center;gap:8px;border-top:2px solid var(--border-color);padding-top:10px}
 .bank-label{font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;flex:1}
-.bank-input{border:2px solid var(--border-color);padding:6px 10px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;width:110px;text-align:right;background:#fff;outline:none}
+.bank-input{border:2px solid var(--border-color);padding:6px 10px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;width:110px;text-align:right;background:var(--card-bg);color:var(--text-color);outline:none}
 .bank-input:focus{background:var(--main-bg)}
 
 /* graph */
@@ -78,7 +78,7 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
 /* bills */
 .section-hdr{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--text-color);margin:0 0 6px}
 .bill-item{background:var(--card-bg) !important;border:2.5px solid var(--border-color);padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;color:#111}
-.bill-item.is-paid{background:#f0f0f0 !important;border-style:dashed;border-color:#aaa}
+.bill-item.is-paid{background:var(--card-bg) !important;opacity:0.5;border-style:dashed;border-color:var(--border-color)}
 .bcheck{width:18px;height:18px;border:2.5px solid var(--border-color);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;font-weight:700}
 .bcheck.on{background:var(--border-color);color:var(--main-bg);border-color:var(--border-color)}
 .binfo{flex:1;min-width:0}
@@ -183,12 +183,7 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
 
 <div class="top-bar">
   <span class="brand">CASHFLOW</span>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span class="date-lbl" id="date-lbl"></span>
-    <button id="theme-toggle-btn" style="background:transparent;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;outline:none;" title="Change Theme">🎨</button>
-  </div>
-</div>
-<div id="theme-swatches" style="display:none;gap:8px;padding:8px 10px;background:var(--card-bg);border:2.5px solid var(--border-color);margin-bottom:10px;justify-content:center;align-items:center;box-shadow:3px 3px 0 #000;color:var(--text-color);">
+  <span class="date-lbl" id="date-lbl"></span>
 </div>
 
 <div class="cycle-strip" id="cycle-strip"></div>
@@ -248,15 +243,26 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
   <div id="bill-list-paid"></div>
 </div>
 
+<!-- SETTINGS TAB -->
+<div class="pane" id="pane-settings">
+  <div class="section-hdr">
+    <span>SETTINGS</span>
+  </div>
+  
+  <div style="background:var(--card-bg);border:2.5px solid var(--border-color);padding:14px;margin-bottom:8px;color:var(--text-color);box-shadow:3px 3px 0 #000;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;margin-bottom:12px;text-transform:uppercase;color:var(--text-color);">SELECT THEME COLOR</div>
+    <div id="settings-theme-list" style="display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;">
+      <!-- Theme swatches cards will be generated here -->
+    </div>
+  </div>
+</div>
 
 <!-- SIMULATE TAB REMOVED -->
-
-
-
 
 <div class="nav-tabs">
   <button class="ntab active" onclick="switchTab('today')">TODAY</button>
   <button class="ntab" onclick="switchTab('bills')">BILLS</button>
+  <button class="ntab" onclick="switchTab('settings')">SETTINGS</button>
   <button class="ntab" onclick="shiftCycle(-1)">← PREV</button>
   <button class="ntab" onclick="shiftCycle(1)">NEXT →</button>
 </div>
@@ -346,7 +352,6 @@ const periods = [
   ]}
 ];
 
-/* ── HELPERS & THEMES ── */
 function parseLocalDate(dateStr) {
   const [year, month, day] = dateStr.split('-').map(Number);
   return new Date(year, month - 1, day);
@@ -358,7 +363,9 @@ const THEMES = {
   green: { bg: '#00E676', text: '#111', border: '#111', card: '#fff' },
   pink: { bg: '#E8157A', text: '#fff', border: '#111', card: '#fff' },
   orange: { bg: '#FF6D00', text: '#111', border: '#111', card: '#fff' },
-  dark: { bg: '#1a1a1a', text: '#eee', border: '#eee', card: '#262626' }
+  bw: { bg: '#ffffff', text: '#111', border: '#111', card: '#fff' }, // Basic Black & White
+  inverted: { bg: '#111111', text: '#fff', border: '#fff', card: '#111111' }, // Inverted Dark
+  dark: { bg: '#1a1a1a', text: '#eee', border: '#eee', card: '#262626' } // Charcoal Dark
 };
 
 function applyTheme(themeKey) {
@@ -376,32 +383,71 @@ function applyTheme(themeKey) {
   saveState();
 }
 
-function buildThemeSwatches() {
-  const container = document.getElementById('theme-swatches');
+function buildSettingsThemes() {
+  const container = document.getElementById('settings-theme-list');
   if (!container) return;
-  container.innerHTML = '<span style="font-size:10px;font-weight:700;margin-right:4px;">THEME:</span>';
+  container.innerHTML = '';
   
   Object.keys(THEMES).forEach(key => {
-    const swatch = document.createElement('div');
-    swatch.style.width = '20px';
-    swatch.style.height = '20px';
-    swatch.style.background = THEMES[key].bg;
-    swatch.style.border = '2px solid var(--border-color)';
-    swatch.style.cursor = 'pointer';
-    swatch.style.borderRadius = '50%';
-    swatch.title = key;
-    swatch.onclick = () => {
+    const theme = THEMES[key];
+    const card = document.createElement('div');
+    card.style.background = theme.card;
+    card.style.color = theme.text;
+    card.style.border = '2.5px solid ' + theme.border;
+    card.style.padding = '12px 10px';
+    card.style.cursor = 'pointer';
+    card.style.fontFamily = "'Space Mono', monospace";
+    card.style.fontSize = '11px';
+    card.style.fontWeight = '700';
+    card.style.textAlign = 'center';
+    card.style.textTransform = 'uppercase';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.alignItems = 'center';
+    card.style.gap = '6px';
+    card.style.boxShadow = S.theme === key ? 'inset 0 0 0 2px ' + theme.border : '3px 3px 0 #000';
+    
+    if (S.theme === key) {
+      card.style.borderColor = 'var(--border-color)';
+      card.style.background = 'var(--border-color)';
+      card.style.color = 'var(--main-bg)';
+    }
+
+    const title = document.createElement('span');
+    title.textContent = (S.theme === key ? '✓ ' : '') + key;
+    
+    // Mini colors preview
+    const preview = document.createElement('div');
+    preview.style.display = 'flex';
+    preview.style.gap = '4px';
+    
+    const dot1 = document.createElement('div');
+    dot1.style.width = '10px';
+    dot1.style.height = '10px';
+    dot1.style.borderRadius = '50%';
+    dot1.style.background = theme.bg;
+    dot1.style.border = '1px solid ' + (key === 'inverted' ? '#fff' : '#111');
+    
+    const dot2 = document.createElement('div');
+    dot2.style.width = '10px';
+    dot2.style.height = '10px';
+    dot2.style.borderRadius = '50%';
+    dot2.style.background = theme.card;
+    dot2.style.border = '1px solid ' + (key === 'inverted' ? '#fff' : '#111');
+
+    preview.appendChild(dot1);
+    preview.appendChild(dot2);
+    
+    card.appendChild(title);
+    card.appendChild(preview);
+    
+    card.onclick = () => {
       applyTheme(key);
-      buildThemeSwatches();
+      buildSettingsThemes();
       buildChart();
     };
     
-    if (S.theme === key) {
-      swatch.style.transform = 'scale(1.2)';
-      swatch.style.boxShadow = '0 0 0 2px var(--border-color)';
-    }
-    
-    container.appendChild(swatch);
+    container.appendChild(card);
   });
 }
 
@@ -621,7 +667,7 @@ function buildChart(){
   const ctx=document.getElementById('proj-chart').getContext('2d');
   if(chart) chart.destroy();
 
-  const isDark = S.theme === 'dark';
+  const isDark = S.theme === 'dark' || S.theme === 'inverted';
   const tickColor = isDark ? '#eee' : '#444';
   const borderColor = isDark ? '#eee' : '#111';
 
@@ -699,36 +745,6 @@ function buildBillsPaid(){
   document.getElementById('paid-count').textContent=paidCount+' PAID';
   if(paidCount===0) el.innerHTML='<div class="empty-state">Nothing marked paid yet.</div>';
 }
-
-/* ── SAVED PROJECTIONS ── */
-function buildProjections(){
-  const el=document.getElementById('proj-list');
-  if(!el) return;
-  el.innerHTML='';
-  if(S.savedProjections.length===0){
-    el.innerHTML='<div class="empty-state">No saved projections yet.<br>Ask "What if..." and save the answer.</div>';
-    return;
-  }
-  S.savedProjections.forEach((p,i)=>{
-    const d=document.createElement('div');
-    d.className='proj-item';
-    d.innerHTML=`
-      <div class="proj-head">
-        <div class="proj-title">${p.label||'Projection'}</div>
-        <button class="proj-del" onclick="deleteProjection(${i})">DELETE ×</button>
-      </div>
-      <div class="proj-q">"${p.question}"</div>
-      <div class="proj-body">${p.answer}</div>
-      <div class="proj-date">${p.date} · cycle: ${p.cycle}</div>`;
-    el.appendChild(d);
-  });
-}
-
-window.deleteProjection=function(i){
-  S.savedProjections.splice(i,1);
-  saveState();
-  buildProjections();
-};
 
 window.togglePaid=function(pi,bi){
   S.periods[pi].bills[bi].paid=!S.periods[pi].bills[bi].paid;
@@ -832,12 +848,13 @@ window.switchTab=function(t){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
   document.getElementById('pane-'+t).classList.add('active');
-  const tabs=['today','bills'];
+  const tabs=['today','bills','settings'];
   const idx = tabs.indexOf(t);
   if(idx !== -1) {
     document.querySelectorAll('.ntab')[idx].classList.add('active');
   }
   if(t==='bills') buildBillsPaid();
+  if(t==='settings') buildSettingsThemes();
 };
 
 /* ── BANK INPUT ── */
@@ -858,7 +875,7 @@ window.shiftCycle = function(dir){
 
 function updateCycleNav(){
   const tabs = document.querySelectorAll('.ntab');
-  const prevBtn = tabs[2], nextBtn = tabs[3];
+  const prevBtn = tabs[3], nextBtn = tabs[4];
   if(!prevBtn || !nextBtn) return;
   prevBtn.style.opacity = S.selected === 0 ? '0.3' : '1';
   prevBtn.style.pointerEvents = S.selected === 0 ? 'none' : 'auto';
@@ -884,13 +901,7 @@ function refresh(){
 })();
 
 applyTheme(S.theme);
-buildThemeSwatches();
-
-document.getElementById('theme-toggle-btn').onclick = function(e) {
-  e.stopPropagation();
-  const panel = document.getElementById('theme-swatches');
-  panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
-};
+buildSettingsThemes();
 
 document.getElementById('undo-toast-btn').onclick = function() {
   undoLastSkip();
@@ -909,4 +920,3 @@ if('serviceWorker' in navigator){
 </script>
 </body>
 </html>
-
