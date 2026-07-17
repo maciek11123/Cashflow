@@ -622,6 +622,14 @@ function buildStrip(){
     d.onclick=()=>{ S.selected=i; saveState(); refresh(); };
     el.appendChild(d);
   });
+  
+  // Center active pill in horizontally scrolling strip
+  setTimeout(() => {
+    const active = el.querySelector('.cpill.active');
+    if (active) {
+      active.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+    }
+  }, 50);
 }
 
 /* ── HERO ── */
@@ -747,11 +755,20 @@ function buildBillsPaid(){
 }
 
 window.togglePaid=function(pi,bi){
-  S.periods[pi].bills[bi].paid=!S.periods[pi].bills[bi].paid;
+  const bill = S.periods[pi].bills[bi];
+  bill.paid = !bill.paid;
+  
+  if (bill.paid && bill.originalCycleIndex !== undefined && bill.originalCycleIndex !== pi) {
+    const origIdx = bill.originalCycleIndex;
+    delete bill.originalCycleIndex;
+    S.periods[pi].bills.splice(bi, 1);
+    S.periods[origIdx].bills.push(bill);
+  }
+  
   saveState();
   buildHero();
   buildBillsToday();
-  buildBillsPaid();
+  if (currentTab === 'bills') buildBillsPaid();
   buildChart();
 };
 
