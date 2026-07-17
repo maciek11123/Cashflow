@@ -809,7 +809,6 @@ function buildHero(){
   document.getElementById('real-num').className='real-num '+amtCls(r);
   document.getElementById('display-bank').textContent=S.selected===0?$n(S.bank):$n(pb)+' proj.';
   document.getElementById('display-bills').textContent=$n(ub);
-  document.getElementById('bank-input').value=S.bank;
 
   const alert=document.getElementById('alert-bar');
   if(r<0){ alert.textContent=$n(Math.abs(r))+' SHORT — BILLS EXCEED BALANCE'; alert.className='alert-bar show'; }
@@ -1145,6 +1144,7 @@ function refresh(){
   buildStrip();
   buildHero();
   buildBillsToday();
+  buildChart();
 }
 
 // Dynamic date label
@@ -1165,7 +1165,6 @@ document.getElementById('undo-toast-btn').onclick = function() {
   undoLastSkip();
 };
 
-buildChart();
 refresh();
 
 // PWA service worker
