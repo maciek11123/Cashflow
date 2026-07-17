@@ -195,6 +195,51 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
   background: var(--border-color);
   color: var(--main-bg);
 }
+
+/* ── TEXT & BUTTON SIZE OVERRIDES ── */
+[data-big="1"] html, [data-big="1"] body { font-size: 14px; }
+[data-big="1"] .brand { font-size: 13px; }
+[data-big="1"] .date-lbl { font-size: 13px; }
+[data-big="1"] .cpill { font-size: 13px; padding: 6px 16px; }
+[data-big="1"] .hero-label { font-size: 12px; }
+[data-big="1"] .real-num { font-size: 46px; }
+[data-big="1"] .hero-sub { font-size: 13px; }
+[data-big="1"] .bank-label { font-size: 12px; }
+[data-big="1"] .bank-input { font-size: 16px; width: 130px; }
+[data-big="1"] .chip .cl { font-size: 11px; }
+[data-big="1"] .chip .cv { font-size: 20px; }
+[data-big="1"] .chip .cs { font-size: 12px; }
+[data-big="1"] .graph-label { font-size: 12px; }
+[data-big="1"] .ntab { font-size: 13px; padding: 14px 4px 18px; }
+[data-big="1"] .section-hdr { font-size: 12px; }
+[data-big="1"] .bname { font-size: 16px; }
+[data-big="1"] .bmeta { font-size: 12px; }
+[data-big="1"] .bamt { font-size: 16px; }
+[data-big="1"] .amt-input { font-size: 16px; width: 74px; }
+[data-big="1"] .bcheck { width: 22px; height: 22px; font-size: 13px; }
+[data-big="1"] .bskip { font-size: 16px; }
+
+[data-big="2"] html, [data-big="2"] body { font-size: 16px; }
+[data-big="2"] .brand { font-size: 15px; }
+[data-big="2"] .date-lbl { font-size: 15px; }
+[data-big="2"] .cpill { font-size: 15px; padding: 8px 18px; }
+[data-big="2"] .hero-label { font-size: 14px; }
+[data-big="2"] .real-num { font-size: 52px; }
+[data-big="2"] .hero-sub { font-size: 15px; }
+[data-big="2"] .bank-label { font-size: 14px; }
+[data-big="2"] .bank-input { font-size: 18px; width: 140px; }
+[data-big="2"] .chip .cl { font-size: 13px; }
+[data-big="2"] .chip .cv { font-size: 22px; }
+[data-big="2"] .chip .cs { font-size: 14px; }
+[data-big="2"] .graph-label { font-size: 14px; }
+[data-big="2"] .ntab { font-size: 15px; padding: 16px 4px 20px; }
+[data-big="2"] .section-hdr { font-size: 14px; }
+[data-big="2"] .bname { font-size: 18px; }
+[data-big="2"] .bmeta { font-size: 14px; }
+[data-big="2"] .bamt { font-size: 18px; }
+[data-big="2"] .amt-input { font-size: 18px; width: 84px; }
+[data-big="2"] .bcheck { width: 26px; height: 26px; font-size: 15px; }
+[data-big="2"] .bskip { font-size: 18px; }
 </style>
 </head>
 <body>
@@ -277,6 +322,15 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
     <button id="pwa-install-btn" style="display:none;width:100%;margin-top:14px;background:var(--border-color);color:var(--main-bg);border:2.5px solid var(--border-color);padding:12px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;text-align:center;text-transform:uppercase;box-shadow:3px 3px 0 #000;" onclick="triggerPwaInstall()">
       Install Cashflow App
     </button>
+  </div>
+  
+  <div style="background:var(--card-bg);border:2.5px solid var(--border-color);padding:14px;margin-bottom:8px;color:var(--card-text);box-shadow:3px 3px 0 #000;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;margin-bottom:12px;text-transform:uppercase;color:var(--card-text);">TEXT & BUTTON SIZE</div>
+    <div style="display:flex;border:2.5px solid var(--border-color);box-shadow:3px 3px 0 #000;">
+      <button id="size-btn-0" style="flex:1;padding:12px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;border:none;border-right:2.5px solid var(--border-color);text-align:center;outline:none;" onclick="changeTextSize('0')">Normal</button>
+      <button id="size-btn-1" style="flex:1;padding:12px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;border:none;border-right:2.5px solid var(--border-color);text-align:center;outline:none;" onclick="changeTextSize('1')">Large</button>
+      <button id="size-btn-2" style="flex:1;padding:12px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;border:none;text-align:center;outline:none;" onclick="changeTextSize('2')">Huge</button>
+    </div>
   </div>
 </div>
 
@@ -558,7 +612,8 @@ let S = {
   selected: 0,
   periods: [],
   savedProjections: [],
-  theme: 'yellow'
+  theme: 'yellow',
+  textSize: '0'
 };
 
 function deepCopyPeriods() {
@@ -574,6 +629,7 @@ function loadState(){
       S.selected=p.selected!==undefined?p.selected:0;
       S.savedProjections=p.savedProjections||[];
       S.theme=p.theme||'yellow';
+      S.textSize=p.textSize||'0';
       
       if(p.periods){
         S.periods=p.periods;
@@ -619,12 +675,60 @@ function saveState(){
     periods: S.periods,
     savedProjections: S.savedProjections,
     selected: S.selected,
-    theme: S.theme
+    theme: S.theme,
+    textSize: S.textSize
   }));
 }
 
 loadState();
 autoSweepUnpaidBills();
+
+function cleanupPaidSkippedBills() {
+  let movedAny = false;
+  for (let i = 0; i < S.periods.length; i++) {
+    const period = S.periods[i];
+    for (let j = period.bills.length - 1; j >= 0; j--) {
+      const bill = period.bills[j];
+      if (bill.paid && bill.originalCycleIndex !== undefined && bill.originalCycleIndex !== i) {
+        const origIdx = bill.originalCycleIndex;
+        delete bill.originalCycleIndex;
+        period.bills.splice(j, 1);
+        S.periods[origIdx].bills.push(bill);
+        movedAny = true;
+      }
+    }
+  }
+  if (movedAny) {
+    saveState();
+  }
+}
+cleanupPaidSkippedBills();
+
+/* ── TEXT & BUTTON SIZE ── */
+window.changeTextSize = function(size) {
+  S.textSize = size;
+  saveState();
+  applyTextSize(size);
+  renderSizeSelector();
+};
+
+function applyTextSize(size) {
+  document.documentElement.setAttribute('data-big', size);
+}
+
+function renderSizeSelector() {
+  ['0', '1', '2'].forEach(sz => {
+    const btn = document.getElementById('size-btn-' + sz);
+    if (!btn) return;
+    if (S.textSize === sz) {
+      btn.style.background = 'var(--border-color)';
+      btn.style.color = 'var(--main-bg)';
+    } else {
+      btn.style.background = 'var(--card-bg)';
+      btn.style.color = 'var(--card-text)';
+    }
+  });
+}
 
 /* ── MATH (Note$ logic) ──
    real = bank - unpaid bills THIS cycle
@@ -985,7 +1089,9 @@ function refresh(){
 })();
 
 applyTheme(S.theme);
+applyTextSize(S.textSize);
 buildSettingsThemes();
+renderSizeSelector();
 
 document.getElementById('undo-toast-btn').onclick = function() {
   undoLastSkip();
