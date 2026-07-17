@@ -363,7 +363,6 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
 </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const PAY = 1790;
 
@@ -781,14 +780,6 @@ function safePerDay(){
   return afterFixed / daysUntilPay();
 }
 
-function calcProjectionNets(){
-  /* Period 0: closing = bank - unpaidBills (current cycle, actual balance)
-     Period N: closing = PAY - totalBills (fresh start, no carryover) */
-  return S.periods.map((p,i) => {
-    if(i === 0) return Math.round(S.bank - unpaidBills(0));
-    return Math.round(PAY - totalBills(i));
-  });
-}
 
 function $n(n){ return (n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString(); }
 function amtCls(n){ return n>=200?'pos':n>=0?'warn':'neg'; }
@@ -968,28 +959,29 @@ function buildBillsToday(){
   const unpaid=p.bills.filter(b=>!b.paid).length;
   document.getElementById('remaining-count').textContent=unpaid+' REMAINING';
   p.bills.forEach((b,j)=>{
-    const isPaid=b.paid;
+    if(b.paid) return; // Paid bills are shown in Settings only
     const d=document.createElement('div');
-    d.className='bill-item'+(isPaid?' is-paid':'');
-    const amtCls='amt-input'+(b.type==='flex'?' flex-c':'')+(isPaid?' dim':'');
+    d.className='bill-item';
+    const amtCls='amt-input'+(b.type==='flex'?' flex-c':'');
 
     // Skipped tag logic
     const isSkipped = b.originalCycleIndex !== undefined && b.originalCycleIndex !== S.selected;
     const skippedTag = isSkipped ? `<span class="skipped-badge" onclick="event.stopPropagation(); revertBill(${S.selected}, ${j})">Skipped ↩</span>` : '';
 
     d.innerHTML=`
-      <div class="bcheck${isPaid?' on':''}" onclick="togglePaid(${S.selected},${j})">${isPaid?'✓':''}</div>
+      <div class="bcheck" onclick="togglePaid(${S.selected},${j})"></div>
       <div class="binfo">
-        <div class="bname${isPaid?' dim':''}">${b.name}${skippedTag}</div>
+        <div class="bname">${b.name}${skippedTag}</div>
         <div class="bmeta">${b.due}${b.type==='flex'?' · FLEXIBLE':''}</div>
       </div>
       <input class="${amtCls}" type="number" value="${b.amt}" min="0" step="1"
         onchange="updateAmt(${S.selected},${j},this.value)"
         onclick="this.select()" />
-      ${!isPaid && S.selected < S.periods.length - 1 ? `<button class="bskip" onclick="event.stopPropagation(); manualSkipBill(${S.selected}, ${j})" title="Skip to next cycle">⏭️</button>` : ''}
+      ${S.selected < S.periods.length - 1 ? `<button class="bskip" onclick="event.stopPropagation(); manualSkipBill(${S.selected}, ${j})" title="Skip to next cycle">⏭️</button>` : ''}
     `;
     el.appendChild(d);
   });
+  if(unpaid===0) el.innerHTML='<div style="text-align:center;padding:20px;font-size:11px;font-weight:700;letter-spacing:.1em;opacity:0.5">ALL BILLS PAID ✓</div>';
 }
 
 /* ── BILLS PAID TAB ── */
