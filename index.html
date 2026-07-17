@@ -19,7 +19,26 @@
   --text-color: #111;
   --border-color: #111;
   --card-bg: #fff;
+  --card-text: #111;
+
+  /* Default cellphone theme variables */
+  --phone-bg: #f2f2f7;
+  --phone-text: #000000;
+  --phone-border: #d1d1d6;
+  --phone-card: #ffffff;
+  --phone-card-text: #000000;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --phone-bg: #000000;
+    --phone-text: #ffffff;
+    --phone-border: #2c2c2e;
+    --phone-card: #1c1c1e;
+    --phone-card-text: #ffffff;
+  }
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var(--text-color);min-height:100vh}
 .app{max-width:420px;margin:0 auto;padding:14px 12px 90px}
@@ -32,20 +51,20 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
 /* cycle strip */
 .cycle-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:10px;scrollbar-width:none}
 .cycle-strip::-webkit-scrollbar{display:none}
-.cpill{flex-shrink:0;border:2.5px solid var(--border-color);border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer;background:#fff;font-family:'Space Mono',monospace}
+.cpill{flex-shrink:0;border:2.5px solid var(--border-color);border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer;background:var(--card-bg);color:var(--card-text);font-family:'Space Mono',monospace}
 .cpill.active{background:var(--border-color);color:var(--main-bg)}
 .cpill.rent{border-color:#E24B4A}
 .cpill.vac{border-color:#1D9E75}
 
 /* real balance hero */
-.hero-card{background:var(--card-bg);border:3px solid var(--border-color);padding:14px;margin-bottom:8px;color:#111}
-.hero-label{font-size:10px;letter-spacing:.14em;font-weight:700;color:#888;margin-bottom:4px}
+.hero-card{background:var(--card-bg);border:3px solid var(--border-color);padding:14px;margin-bottom:8px;color:var(--card-text)}
+.hero-label{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--card-text);opacity:0.6;margin-bottom:4px}
 .real-num{font-size:40px;font-weight:700;line-height:1;margin-bottom:3px}
-.real-num.pos{color:#111}
+.real-num.pos{color:var(--card-text)}
 .real-num.warn{color:#BA7517}
 .real-num.neg{color:#E8157A}
-.hero-sub{font-size:11px;color:#888;margin-bottom:10px;display:flex;gap:12px}
-.hero-sub b{color:#111}
+.hero-sub{font-size:11px;color:var(--card-text);opacity:0.6;margin-bottom:10px;display:flex;gap:12px}
+.hero-sub b{color:var(--card-text)}
 .alert-bar{border:2px solid #E8157A;padding:7px 10px;font-size:11px;font-weight:700;color:#E8157A;margin-bottom:10px;display:none}
 .alert-bar.show{display:block}
 .two-chips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
@@ -56,13 +75,13 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
 .chip .cv{font-size:17px;font-weight:700;line-height:1}
 .chip .cs{font-size:10px;opacity:.75;margin-top:2px}
 .bank-row{display:flex;align-items:center;gap:8px;border-top:2px solid var(--border-color);padding-top:10px}
-.bank-label{font-size:10px;letter-spacing:.1em;font-weight:700;color:#888;flex:1}
-.bank-input{border:2px solid var(--border-color);padding:6px 10px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;width:110px;text-align:right;background:var(--card-bg);color:var(--text-color);outline:none}
+.bank-label{font-size:10px;letter-spacing:.1em;font-weight:700;color:var(--card-text);opacity:0.6;flex:1}
+.bank-input{border:2px solid var(--border-color);padding:6px 10px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;width:110px;text-align:right;background:var(--card-bg);color:var(--card-text);outline:none}
 .bank-input:focus{background:var(--main-bg)}
 
 /* graph */
-.graph-card{background:var(--card-bg);border:3px solid var(--border-color);padding:14px;margin-bottom:8px;color:#111}
-.graph-label{font-size:10px;letter-spacing:.14em;font-weight:700;margin-bottom:8px}
+.graph-card{background:var(--card-bg);border:3px solid var(--border-color);padding:14px;margin-bottom:8px;color:var(--card-text)}
+.graph-label{font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--card-text);opacity:0.6;margin-bottom:8px}
 .graph-wrap{position:relative;height:100px}
 
 /* nav tabs */
@@ -77,34 +96,34 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
 
 /* bills */
 .section-hdr{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.12em;font-weight:700;color:var(--text-color);margin:0 0 6px}
-.bill-item{background:var(--card-bg) !important;border:2.5px solid var(--border-color);padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;color:#111}
+.bill-item{background:var(--card-bg) !important;border:2.5px solid var(--border-color);padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;color:var(--card-text)}
 .bill-item.is-paid{background:var(--card-bg) !important;opacity:0.5;border-style:dashed;border-color:var(--border-color)}
 .bcheck{width:18px;height:18px;border:2.5px solid var(--border-color);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;font-size:11px;font-weight:700}
 .bcheck.on{background:var(--border-color);color:var(--main-bg);border-color:var(--border-color)}
 .binfo{flex:1;min-width:0}
 .bname{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;flex-wrap:wrap;}
-.bname.dim{color:#aaa}
-.bmeta{font-size:10px;color:#999;letter-spacing:.04em;margin-top:1px}
+.bname.dim{color:var(--card-text);opacity:0.5}
+.bmeta{font-size:10px;color:var(--card-text);opacity:0.6;letter-spacing:.04em;margin-top:1px}
 .bamt{font-weight:700;font-size:13px;white-space:nowrap}
 .bamt.flex-c{color:#7a3f00}
-.bamt.dim{color:#aaa}
-.amt-input{border:none;border-bottom:2px solid var(--border-color);background:transparent;font-family:Space Mono,monospace;font-size:13px;font-weight:700;width:64px;text-align:right;outline:none;padding:1px 2px}
-.amt-input:focus{border-bottom:2px solid #E8157A;background:#FFF9C4}
+.bamt.dim{color:var(--card-text);opacity:0.5}
+.amt-input{border:none;border-bottom:2px solid var(--border-color);background:transparent;font-family:Space Mono,monospace;font-size:13px;font-weight:700;width:64px;text-align:right;outline:none;padding:1px 2px;color:inherit}
+.amt-input:focus{border-bottom:2px solid #E8157A;background:#FFF9C4;color:#111}
 .amt-input.flex-c{color:#7a3f00}
-.amt-input.dim{color:#aaa}
+.amt-input.dim{color:var(--card-text);opacity:0.5}
 
 /* projections */
-.proj-item{background:var(--card-bg);border:2.5px solid var(--border-color);padding:12px;margin-bottom:6px;color:#111}
+.proj-item{background:var(--card-bg);border:2.5px solid var(--border-color);padding:12px;margin-bottom:6px;color:var(--card-text)}
 .proj-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .proj-title{font-size:13px;font-weight:700}
 .proj-del{font-size:11px;color:#E8157A;cursor:pointer;font-weight:700;border:none;background:none;font-family:'Space Mono',monospace}
-.proj-q{font-size:11px;color:#888;margin-bottom:6px;font-style:italic}
+.proj-q{font-size:11px;color:var(--card-text);opacity:0.6;margin-bottom:6px;font-style:italic}
 .proj-body{font-size:12px;line-height:1.6}
 .proj-impact{font-size:11px;color:#BA7517;font-weight:700;margin-top:5px}
-.proj-date{font-size:10px;color:#aaa;letter-spacing:.06em;margin-top:4px}
+.proj-date{font-size:10px;color:var(--card-text);opacity:0.5;letter-spacing:.06em;margin-top:4px}
 .save-btn{border:2.5px solid var(--border-color);background:var(--main-bg);padding:6px 12px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px}
 .save-btn:hover{background:var(--border-color);color:var(--main-bg)}
-.empty-state{font-size:12px;color:#888;padding:20px 0;text-align:center}
+.empty-state{font-size:12px;color:var(--card-text);opacity:0.6;padding:20px 0;text-align:center}
 
 
 /* bottom nav */
@@ -249,11 +268,15 @@ html,body{font-family:'Space Mono',monospace;background:var(--main-bg);color:var
     <span>SETTINGS</span>
   </div>
   
-  <div style="background:var(--card-bg);border:2.5px solid var(--border-color);padding:14px;margin-bottom:8px;color:var(--text-color);box-shadow:3px 3px 0 #000;">
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;margin-bottom:12px;text-transform:uppercase;color:var(--text-color);">SELECT THEME COLOR</div>
+  <div style="background:var(--card-bg);border:2.5px solid var(--border-color);padding:14px;margin-bottom:8px;color:var(--card-text);box-shadow:3px 3px 0 #000;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;margin-bottom:12px;text-transform:uppercase;color:var(--card-text);">SELECT THEME COLOR</div>
     <div id="settings-theme-list" style="display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;">
       <!-- Theme swatches cards will be generated here -->
     </div>
+    
+    <button id="pwa-install-btn" style="display:none;width:100%;margin-top:14px;background:var(--border-color);color:var(--main-bg);border:2.5px solid var(--border-color);padding:12px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;text-align:center;text-transform:uppercase;box-shadow:3px 3px 0 #000;" onclick="triggerPwaInstall()">
+      Install Cashflow App
+    </button>
   </div>
 </div>
 
@@ -358,14 +381,15 @@ function parseLocalDate(dateStr) {
 }
 
 const THEMES = {
-  yellow: { bg: '#FFD600', text: '#111', border: '#111', card: '#fff' },
-  cyan: { bg: '#00E5FF', text: '#111', border: '#111', card: '#fff' },
-  green: { bg: '#00E676', text: '#111', border: '#111', card: '#fff' },
-  pink: { bg: '#E8157A', text: '#fff', border: '#111', card: '#fff' },
-  orange: { bg: '#FF6D00', text: '#111', border: '#111', card: '#fff' },
-  bw: { bg: '#ffffff', text: '#111', border: '#111', card: '#fff' }, // Basic Black & White
-  inverted: { bg: '#111111', text: '#fff', border: '#fff', card: '#111111' }, // Inverted Dark
-  dark: { bg: '#1a1a1a', text: '#eee', border: '#eee', card: '#262626' } // Charcoal Dark
+  yellow: { bg: '#FFD600', text: '#111', border: '#111', card: '#fff', cardText: '#111' },
+  cyan: { bg: '#00E5FF', text: '#111', border: '#111', card: '#fff', cardText: '#111' },
+  green: { bg: '#00E676', text: '#111', border: '#111', card: '#fff', cardText: '#111' },
+  pink: { bg: '#E8157A', text: '#fff', border: '#111', card: '#fff', cardText: '#111' },
+  orange: { bg: '#FF6D00', text: '#111', border: '#111', card: '#fff', cardText: '#111' },
+  bw: { bg: '#ffffff', text: '#111', border: '#111', card: '#fff', cardText: '#111' }, // Black & White
+  wob: { bg: '#111111', text: '#fff', border: '#fff', card: '#111', cardText: '#fff' }, // White & Black
+  dark: { bg: '#121212', text: '#e0e0e0', border: '#333', card: '#1e1e1e', cardText: '#e0e0e0' }, // Dark Mode
+  phone: { bg: 'var(--phone-bg)', text: 'var(--phone-text)', border: 'var(--phone-border)', card: 'var(--phone-card)', cardText: 'var(--phone-card-text)' } // Phone Theme
 };
 
 function applyTheme(themeKey) {
@@ -374,10 +398,18 @@ function applyTheme(themeKey) {
   document.documentElement.style.setProperty('--text-color', theme.text);
   document.documentElement.style.setProperty('--border-color', theme.border);
   document.documentElement.style.setProperty('--card-bg', theme.card);
+  document.documentElement.style.setProperty('--card-text', theme.cardText);
   
   // Update meta theme color
   let metaTheme = document.querySelector('meta[name="theme-color"]');
-  if (metaTheme) metaTheme.setAttribute('content', theme.bg);
+  if (metaTheme) {
+    if (themeKey === 'phone') {
+      const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      metaTheme.setAttribute('content', isDark ? '#000000' : '#f2f2f7');
+    } else {
+      metaTheme.setAttribute('content', theme.bg);
+    }
+  }
   
   S.theme = themeKey;
   saveState();
@@ -388,12 +420,37 @@ function buildSettingsThemes() {
   if (!container) return;
   container.innerHTML = '';
   
+  const labels = {
+    yellow: 'Yellow',
+    cyan: 'Cyan',
+    green: 'Green',
+    pink: 'Pink',
+    orange: 'Orange',
+    bw: 'Black & White',
+    wob: 'White & Black',
+    dark: 'Dark Mode',
+    phone: 'Phone Theme'
+  };
+
   Object.keys(THEMES).forEach(key => {
     const theme = THEMES[key];
     const card = document.createElement('div');
-    card.style.background = theme.card;
-    card.style.color = theme.text;
-    card.style.border = '2.5px solid ' + theme.border;
+    
+    // Resolve preview values for Phone theme
+    let cardBgColor = theme.card;
+    let textColor = theme.cardText;
+    let borderColorVal = theme.border;
+    
+    if (key === 'phone') {
+      const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      cardBgColor = isDark ? '#1c1c1e' : '#ffffff';
+      textColor = isDark ? '#ffffff' : '#000000';
+      borderColorVal = isDark ? '#2c2c2e' : '#d1d1d6';
+    }
+
+    card.style.background = cardBgColor;
+    card.style.color = textColor;
+    card.style.border = '2.5px solid ' + borderColorVal;
     card.style.padding = '12px 10px';
     card.style.cursor = 'pointer';
     card.style.fontFamily = "'Space Mono', monospace";
@@ -405,7 +462,7 @@ function buildSettingsThemes() {
     card.style.flexDirection = 'column';
     card.style.alignItems = 'center';
     card.style.gap = '6px';
-    card.style.boxShadow = S.theme === key ? 'inset 0 0 0 2px ' + theme.border : '3px 3px 0 #000';
+    card.style.boxShadow = S.theme === key ? 'inset 0 0 0 2px ' + borderColorVal : '3px 3px 0 #000';
     
     if (S.theme === key) {
       card.style.borderColor = 'var(--border-color)';
@@ -414,7 +471,7 @@ function buildSettingsThemes() {
     }
 
     const title = document.createElement('span');
-    title.textContent = (S.theme === key ? '✓ ' : '') + key;
+    title.textContent = (S.theme === key ? '✓ ' : '') + (labels[key] || key);
     
     // Mini colors preview
     const preview = document.createElement('div');
@@ -425,15 +482,24 @@ function buildSettingsThemes() {
     dot1.style.width = '10px';
     dot1.style.height = '10px';
     dot1.style.borderRadius = '50%';
-    dot1.style.background = theme.bg;
-    dot1.style.border = '1px solid ' + (key === 'inverted' ? '#fff' : '#111');
+    
+    let previewBg = theme.bg;
+    let previewCard = theme.card;
+    if (key === 'phone') {
+      const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      previewBg = isDark ? '#000000' : '#f2f2f7';
+      previewCard = isDark ? '#1c1c1e' : '#ffffff';
+    }
+
+    dot1.style.background = previewBg;
+    dot1.style.border = '1px solid ' + (key === 'wob' || (key === 'phone' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? '#fff' : '#111');
     
     const dot2 = document.createElement('div');
     dot2.style.width = '10px';
     dot2.style.height = '10px';
     dot2.style.borderRadius = '50%';
-    dot2.style.background = theme.card;
-    dot2.style.border = '1px solid ' + (key === 'inverted' ? '#fff' : '#111');
+    dot2.style.background = previewCard;
+    dot2.style.border = '1px solid ' + (key === 'wob' || (key === 'phone' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? '#fff' : '#111');
 
     preview.appendChild(dot1);
     preview.appendChild(dot2);
@@ -675,7 +741,8 @@ function buildChart(){
   const ctx=document.getElementById('proj-chart').getContext('2d');
   if(chart) chart.destroy();
 
-  const isDark = S.theme === 'dark' || S.theme === 'inverted';
+  const isPhoneDark = S.theme === 'phone' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = S.theme === 'dark' || S.theme === 'wob' || isPhoneDark;
   const tickColor = isDark ? '#eee' : '#444';
   const borderColor = isDark ? '#eee' : '#111';
 
@@ -932,6 +999,39 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js')
     .then(()=>console.log('SW registered'))
     .catch(e=>console.log('SW failed:',e));
+}
+
+// PWA Install Prompt
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('pwa-install-btn');
+  if (btn) btn.style.display = 'block';
+});
+
+window.triggerPwaInstall = function() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+      const btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.style.display = 'none';
+      deferredInstallPrompt = null;
+    }
+  });
+};
+
+// Phone theme prefers-color-scheme listener
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (S.theme === 'phone') {
+      applyTheme('phone');
+      buildSettingsThemes();
+      buildChart();
+    }
+  });
 }
 
 </script>
